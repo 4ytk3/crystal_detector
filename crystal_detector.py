@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import sys
 import cv2
@@ -451,3 +452,6 @@ if __name__ == '__main__':
     image = 'NaClcrystal_image.jpg'
 
     nacl = Image(title, image)
+=======
+ｃ
+>>>>>>> origin/main
