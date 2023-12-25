@@ -5,13 +5,13 @@ import numpy as np
 from matplotlib import pyplot as plt
 from abc import abstractclassmethod, ABC, ABCMeta, abstractmethod
 
+
 class Image(ABC):
-    def __init__(self, image: str, title: str):
+    def __init__(self, image: np.ndarray, title: str):
         self._image = image
         self._rgb_image = ConvertImage.path2image(self._image)
         self._gray_image = ConvertImage.image2gray(self._rgb_image)
         self._title = title
-        self.apply_filter()
 
     @abstractmethod
     def apply_filter(self, *args):

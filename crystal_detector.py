@@ -30,10 +30,6 @@ class Image(ABC):
     def apply_filter(self, *args):
         pass
 
-class Main:
-    def __init__(self, filter: object = Image):
-        ShowImage.show_image()
-
 class LoadImage:
     @staticmethod
     def path2image(image: str) -> np.ndarray:

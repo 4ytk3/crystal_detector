@@ -1,18 +1,17 @@
+from __future__ import annotations
 import os
 import sys
 import cv2
 import copy
 import numpy as np
-from
 from abc import abstractclassmethod, ABC, ABCMeta, abstractmethod
 from matplotlib import pyplot as plt
 from scipy.ndimage import maximum_filter
 from skimage.feature import peak_local_max
 
 class SpatialFilter(ABC):
-    def __init__(self, image: object):
-        self._rgb_image = image._rgb_image
-        self._gray_image = image._gray_image
+    def __init__(self, image: Image):
+        self._image = image._image
         self._title = image._title
 
     @abstractmethod
