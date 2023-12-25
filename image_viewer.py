@@ -17,7 +17,6 @@ class Image(ABC):
     def apply_filter(self, *args):
         pass
 
-
 class ConvertImage:
     @staticmethod
     def path2image(image: str) -> np.ndarray:
