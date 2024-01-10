@@ -7,11 +7,18 @@ from abc import abstractclassmethod, ABC, ABCMeta, abstractmethod
 
 from scipy.ndimage import maximum_filter
 from skimage.feature import peak_local_max
-
 import math
 import statistics
 from decimal import ROUND_HALF_UP, Decimal
 from pylsd import lsd
+
+import image_viewer as iv
+
+
+class CrystalDetector():
+    def __init__(self, path: str, title: str):
+        self._crystal_image = iv.ConvertImage.path2image(path)
+        self._title = title
 
 class Image(ABC):
     def __init__(self, image: str, title: str):
@@ -23,28 +30,7 @@ class Image(ABC):
     def apply_filter(self, *args):
         pass
 
-class Main:
-    def __init__(self, filter: object = Image):
-        ShowImage.show_image()
-
-class LoadImage: # Static
-    def __init__(self, image: str):
-        if type(image) is str:
-            self._rgb_image = LoadImage.path2image(image)
-            self._gray_image = LoadImage.image2gray(self._rgb_image)
-
-        elif len(image.shape) == 2:
-            self._gray_image = image
-            self._rgb_image = LoadImage.gray2image(self._gray_image)
-
-        elif len(image.shape) == 4:
-            self._rgb_image = image
-            self._gray_image = LoadImage.image2gray(image)
-
-        else:
-            print(f"This is not image")
-            sys.exit()
-
+class LoadImage:
     @staticmethod
     def path2image(image: str) -> np.ndarray:
         try:
