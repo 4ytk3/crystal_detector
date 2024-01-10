@@ -5,17 +5,11 @@ import numpy as np
 from matplotlib import pyplot as plt
 from abc import abstractclassmethod, ABC, ABCMeta, abstractmethod
 
-
 class Image(ABC):
-    def __init__(self, image: np.ndarray, title: str):
-        self._image = image
-        self._rgb_image = ConvertImage.path2image(self._image)
-        self._gray_image = ConvertImage.image2gray(self._rgb_image)
+    def __init__(self, title: str, path: str):
         self._title = title
-
-    @abstractmethod
-    def apply_filter(self, *args):
-        pass
+        self._rgb_image = ConvertImage.path2image(path)
+        self._gray_image = ConvertImage.rgb2gray(self._rgb_image)
 
 class ConvertImage:
     @staticmethod
@@ -25,56 +19,48 @@ class ConvertImage:
         return _rgb_image
 
     @staticmethod
-    def gray2image(image: np.ndarray) -> np.ndarray:
+    def gray2rgb(image: np.ndarray) -> np.ndarray:
         _rgb_image = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_GRAY2RGB)
         return _rgb_image
 
     @staticmethod
-    def image2gray(image: np.ndarray) -> np.ndarray:
+    def rgb2gray(image: np.ndarray) -> np.ndarray:
         _gray_image = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_RGB2GRAY)
         return _gray_image
 
-
-class ShowImage1: #Static
+class ShowImage: #Static
     @staticmethod
-    def show_image(image: np.ndarray, title: str):
+    def set_image(ax, image: Image):
+        ax.imshow(image._rgb_image)
+        ax.set_title(image._title), ax.set_xticks([]), ax.set_yticks([]), ax.set_xticklabels([]), ax.set_yticklabels([])
+
+    @staticmethod
+    def show_image(image: Image):
         fig, ax = plt.subplots()
-        ShowImage.set_image(ax, image, title)
+        ShowImage.set_image(ax, image)
         plt.show()
 
     @staticmethod
-    def save_image(image: np.ndarray, title: str):
-        fig, ax = plt.subplots()
-        ShowImage.set_image(ax, image, title)
-        name = title.lower().replace(' ', '_')
+    def save_image(image: Image, dir='image'):
+        name = image._title.lower().replace(' ', '_')
         path = os.path.join(dir, f'{name}.png')
-        if len(image) == 3:
-            bgr_image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        bgr_image = cv2.cvtColor(image._rgb_image, cv2.COLOR_RGB2BGR)
         cv2.imwrite(path, bgr_image)
 
     @staticmethod
-    def save_fig(image: np.ndarray, title: str):
+    def save_fig(image: Image, dir='image'):
         fig, ax = plt.subplots()
-        ShowImage.set_image(ax, image, title)
-        name = title.lower().replace(' ', '_')
+        ShowImage.set_image(ax, image)
+        name = image._title.lower().replace(' ', '_')
         path = os.path.join(dir, f'{name}.png')
         fig.savefig(path, dpi=600)
 
 
-class ShowImage(ABC):
-    def __init__(self, image, title):
-        fig, ax = plt.subplots()
-        ShowImage.set_image(ax, image, title)
-        name = title.lower().replace(' ', '_')
-        path = os.path.join(dir, f'{name}.png')
+def main(title, path):
+    nacl = Image(title, path)
+    ShowImage.save_fig(nacl)
 
-    @staticmethod
-    def set_image(ax, image: np.ndarray, title: str):
-        ax.imshow(image, cmap='gray')
-        ax.set_title(title), ax.set_xticks([]), ax.set_yticks([]), ax.set_xticklabels([]), ax.set_yticklabels([])
-
-class SaveImage(ShowImage):
-    pass
-
-class SaveFig(ShowImage):
-    pass
+if __name__ == '__main__':
+    title = "NaCl"
+    path = "image/NaCl1_noscale.jpg"
+    main(title, path)
