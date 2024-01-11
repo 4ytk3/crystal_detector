@@ -24,7 +24,6 @@ class FFT(Image):
 
     def get_spectrum(self, shifted_fft):
         return 20 * np.log(np.abs(shifted_fft))
-
 class IFFT(Image):
     def __init__(self, fft_image: FFT, *args):
         self._title = self.set_title(fft_image._title)
@@ -36,63 +35,59 @@ class IFFT(Image):
     def get_ifft(self, shifted_fft):
         return np.abs(np.fft.ifft2(np.fft.fftshift(shifted_fft)))
 
-class SpatialFilter(IFFT, ABC):
+class SpatialFilter(Image, ABC):
     def __init__(self, fft_image: FFT, *args):
         self._title = self.set_title(fft_image._title)
-        shifted_fft = self.apply_mask(fft_image._shifted_fft)
-        self._ifft_image = self.get_ifft(shifted_fft).real
-        self._display_image = self.gray2rgb(self._ifft_image)
+        self._masked_fft = self.apply_mask(fft_image._shifted_fft)
+        self._display_image = self._masked_fft
 
-    def apply_mask(self, shifted_fft):
+    def apply_mask(self, shifted_fft, mask):
         height, width = shifted_fft.shape[0], shifted_fft.shape[1]
         mask = self.make_mask(height, width)
         return shifted_fft*mask
 
-    @staticmethod
-    def calc_center(self, height, width):
-        return width//2, height//2
-
     @abstractmethod
-    def make_mask(self, height, width):
-        pass
+    def make_mask(self, shifted_fft, *args):
+        raise NotImplementedError()
 
-    @staticmethod
-    def make_mask(self, height, width):
-        return np.ones([height, width], dtype=np.uint8)
+class LowpassFilter(SpatialFilter):
+    def __init__(self, fft_image: FFT, inner_radius=90):
+        super().__init__(fft_image, inner_radius)
 
-        self._height, self._width = self._fft_image.shape[0], self._fft_image.shape[1]
-        self._center_x, self._center_y = self.calc_center(self._height, self._width)
-        self._mask = self.make_mask()
-class LowpassFilter(IFFT):
-    def __init__(self, title, image, inner_radius=90):
-        self._inner_radius = inner_radius
-        super().__init__(title, image)
-        self._title = "Lowpass " + self._title
+    def set_title(self, title: str):
+        return "Lowpass " + title
 
-    def make_mask(self):
-        self._mask = np.zeros([self._height, self._width], dtype=np.uint8)
-        cv2.circle(self._mask, center=(self._center_x, self._center_y), radius=self._inner_radius, color=255, thickness=-1)
+    def make_mask(self, height, width, inner_radius):
+        mask = np.zeros([height, width], dtype=np.uint8)
+        cv2.circle(mask, center=(width//2, height//2), radius=inner_radius, color=255, thickness=-1)
+        return mask
 
-class HighpassFilter(FastFourierTransform):
-    def __init__(self, title, image, outer_radius=80):
-        self._outer_radius = outer_radius
-        super().__init__(title, image)
-        self._title = "Highpass " + self._title
+class HighpassFilter(SpatialFilter):
+    def __init__(self, fft_image: FFT, outer_radius=80):
+        super().__init__(fft_image, outer_radius)
 
-    def make_mask(self):
-        self._mask = np.ones([self._height, self._width], dtype=np.uint8)
-        cv2.circle(self._mask, center=(self._center_x, self._center_y), radius=self._outer_radius, color=0, thickness=-1)
+    def set_title(self, title: str):
+        return "Highpass " + title
 
-class BandpassFilter(FastFourierTransform):
-    def __init__(self, title, image, outer_radius=100, inner_radius=70):
-        self._outer_radius, self._inner_radius = outer_radius, inner_radius
-        super().__init__(title, image)
-        self._title = "Bandpass " + self._title
+    def make_mask(self, height, width, outer_radius):
+        mask = np.ones([height, width], dtype=np.uint8)
+        cv2.circle(mask, center=(width//2, height//2), radius=outer_radius, color=0, thickness=-1)
+        return mask
 
-    def make_mask(self):
-        self._mask = np.zeros([self._height, self._width], dtype=np.uint8)
-        cv2.circle(self._mask, center=(self._center_x, self._center_y), radius=self._outer_radius, color=1, thickness=-1)
-        cv2.circle(self._mask, center=(self._center_x, self._center_y), radius=self._inner_radius, color=0, thickness=-1)
+class BandpassFilter(SpatialFilter):
+    def __init__(self, fft_image: FFT, outer_radius=100, inner_radius=70):
+        super().__init__(fft_image, outer_radius, inner_radius)
+
+    def set_title(self, title: str):
+        return "Bandpass " + title
+
+    def make_mask(self, height, width, outer_radius, inner_radius):
+        mask = np.zeros([height, width], dtype=np.uint8)
+        cv2.circle(mask, center=(width//2, height//2), radius=outer_radius, color=1, thickness=-1)
+        cv2.circle(mask, center=(width//2, height//2), radius=inner_radius, color=0, thickness=-1)
+        return mask
+
+
 
 class BandFilter(FastFourierTransform):
     def __init__(self, title, image, angle=0, size=10):

@@ -2,6 +2,7 @@ from __future__ import annotations
 import os
 import cv2
 import numpy as np
+from frequency_filter import FFT
 from matplotlib import pyplot as plt
 from abc import ABC, abstractmethod
 
@@ -60,8 +61,11 @@ class ImageProcessor:
             bgr_image = cv2.cvtColor(image._display_image, cv2.COLOR_RGB2BGR)
             cv2.imwrite(path, bgr_image)
 
+
 if __name__ == '__main__':
     title = "NaCl"
     path = "image/NaCl1_noscale.jpg"
     nacl = OriginalImage(title, path)
+    fft = FFT(nacl)
+    lowpass = LowpassFilter(fft)
     ImageProcessor.show_image(nacl)
