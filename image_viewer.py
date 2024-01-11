@@ -5,28 +5,32 @@ import numpy as np
 from matplotlib import pyplot as plt
 from abc import abstractclassmethod, ABC, ABCMeta, abstractmethod
 
-class ImageInterface:
-    @abstractmethod
-    def renew_title(self):
-        pass
-
-    @abstractmethod
-    def apply_filter(self):
-        pass
-
 class Image:
-    def __init__(self, title: str, path: str):
-        self._title = title
-        self._rgb_image = ConvertImage.path2image(path)
-        self._gray_image = ConvertImage.rgb2gray(self._rgb_image)
-
     @abstractmethod
-    def renew_title(self):
+    def set_title(self):
         pass
 
     @abstractmethod
     def apply_filter(self):
         pass
+
+    @staticmethod
+    def read_image(path):
+        _rgb_image = ConvertImage.path2image(path)
+        _gray_image = ConvertImage.rgb2gray(_rgb_image)
+        return _rgb_image, _gray_image
+
+class OriginalImage(Image):
+    def __init__(self, title: str, path: str):
+        self._title = self.set_title(title)
+        self._rgb_image, self._gray_image = self.read_image(path)
+
+    def set_title(self, title: str):
+        return "Original " + title
+
+    def apply_filter(self):
+        pass
+
 class ConvertImage:
     @staticmethod
     def path2image(image: str) -> np.ndarray:
