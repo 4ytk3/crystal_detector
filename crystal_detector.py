@@ -12,7 +12,7 @@ import statistics
 from decimal import ROUND_HALF_UP, Decimal
 from pylsd import lsd
 
-import image_viewer as iv
+import image_processor as iv
 
 
 class CrystalDetector():

@@ -31,6 +31,7 @@ class OriginalImage(Image):
         self._title = self.set_title(title)
         self._rgb_image = self.path2rgb(path)
         self._gray_image = self.rgb2gray(self._rgb_image)
+        self._display_image = self._rgb_image
 
     def set_title(self, title: str) -> str:
         return "Original " + title
@@ -38,7 +39,7 @@ class OriginalImage(Image):
 class ImageProcessor:
     @staticmethod
     def set_image(ax, image: Image):
-        ax.imshow(image._rgb_image)
+        ax.imshow(image._display_image)
         ax.set_title(image._title), ax.set_xticks([]), ax.set_yticks([]), ax.set_xticklabels([]), ax.set_yticklabels([])
 
     @staticmethod
@@ -56,7 +57,7 @@ class ImageProcessor:
             ImageProcessor.set_image(ax, image)
             fig.savefig(path, dpi=600)
         else:
-            bgr_image = cv2.cvtColor(image._rgb_image, cv2.COLOR_RGB2BGR)
+            bgr_image = cv2.cvtColor(image._display_image, cv2.COLOR_RGB2BGR)
             cv2.imwrite(path, bgr_image)
 
 if __name__ == '__main__':
