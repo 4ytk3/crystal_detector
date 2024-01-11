@@ -2,7 +2,7 @@ from __future__ import annotations
 import os
 import cv2
 import numpy as np
-from frequency_filter import FFT
+from frequency_filter import FFT, IFFT, LowpassFilter
 from matplotlib import pyplot as plt
 from abc import ABC, abstractmethod
 
@@ -68,4 +68,5 @@ if __name__ == '__main__':
     nacl = OriginalImage(title, path)
     fft = FFT(nacl)
     lowpass = LowpassFilter(fft)
+    ifft = IFFT(lowpass)
     ImageProcessor.show_image(nacl)
