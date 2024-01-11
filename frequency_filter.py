@@ -1,51 +1,69 @@
 import os
 import sys
+from typing import Any
 import cv2
 import copy
 import numpy as np
-from abc import ABCMeta, abstractmethod
-from matplotlib import pyplot as plt
-import image_viewer
+from abc import ABC, abstractmethod
+from image_processor import Image, OriginalImage, ImageProcessor
 from scipy.ndimage import maximum_filter
 from skimage.feature import peak_local_max
 
-class FastFourierTransform(image_viewer.Image):
-    def __init__(self, title, image):
-        super().__init__(title, image)
-        self.get_fft()
-        self.get_spectrum()
-        self.make_mask()
-        self.get_ifft()
+class FFT(Image):
+    def __init__(self, image: Image, *args):
+        self._title = self.set_title(image._title)
+        self._shifted_fft = self.get_fft(image._gray_image)
+        self._fft_image = self.get_spectrum(self._shifted_fft)
+        self._display_image = self.gray2rgb(self._fft_image)
 
-    def get_fft(self):
-        self._shifted_fft = np.fft.fftshift(np.fft.fft2(self._gray_image))
+    def set_title(self, title: str) -> str:
+        return "FFT " + title.replace("Original ", "")
 
-    def get_spectrum(self):
-        self._fft_image = 20 * np.log(np.abs(self._shifted_fft))
-        self._height, self._width = self._fft_image.shape[0], self._fft_image.shape[1]
-        self._center_x, self._center_y = self._width//2, self._height//2
-        self._mask = np.ones([self._height, self._width], dtype=np.uint8)
+    def get_fft(self, gray_image):
+        return np.fft.fftshift(np.fft.fft2(gray_image))
+
+    def get_spectrum(self, shifted_fft):
+        return 20 * np.log(np.abs(shifted_fft))
+
+class IFFT(Image):
+    def __init__(self, fft_image: FFT, *args):
+        self._title = self.set_title(fft_image._title)
+        self._ifft_image = self.get_ifft(fft_image._shifted_fft).real
+
+    def set_title(self, title: str) -> str:
+        return "IFFT " + title.replace("FFT", "")
+
+    def get_ifft(self, shifted_fft):
+        return np.abs(np.fft.ifft2(np.fft.fftshift(shifted_fft)))
+
+class SpatialFilter(IFFT, ABC):
+    def __init__(self, fft_image: FFT, *args):
+        self._title = self.set_title(fft_image._title)
+        shifted_fft = self.apply_mask(fft_image._shifted_fft)
+        self._ifft_image = self.get_ifft(shifted_fft).real
+        self._display_image = self.gray2rgb(self._ifft_image)
+
+    def apply_mask(self, shifted_fft):
+        height, width = shifted_fft.shape[0], shifted_fft.shape[1]
+        mask = self.make_mask(height, width)
+        return shifted_fft*mask
+
+    @staticmethod
+    def calc_center(self, height, width):
+        return width//2, height//2
 
     @abstractmethod
-    def make_mask(self):
+    def make_mask(self, height, width):
         pass
 
-    def get_ifft(self):
-        self._fft_image = self._fft_image*self._mask
-        self._shifted_fft[self._mask==0] = [0]
-        self._process_image = np.abs(np.fft.ifft2(np.fft.fftshift(self._shifted_fft)))
+    @staticmethod
+    def make_mask(self, height, width):
+        return np.ones([height, width], dtype=np.uint8)
 
-    def set_image(self, ax, fft_mode=False):
-        if not fft_mode:
-            ax.imshow(self._process_image, cmap='gray')
-            ax.set_title(self._title)
-        else:
-            ax.imshow(self._fft_image, cmap='gray')
-            ax.set_title("FFT " + self._title)
-
-        ax.set_xticks([]), ax.set_yticks([]), ax.set_xticklabels([]), ax.set_yticklabels([])
-
-class LowpassFilter(FastFourierTransform):
+        self._height, self._width = self._fft_image.shape[0], self._fft_image.shape[1]
+        self._center_x, self._center_y = self.calc_center(self._height, self._width)
+        self._mask = self.make_mask()
+class LowpassFilter(IFFT):
     def __init__(self, title, image, inner_radius=90):
         self._inner_radius = inner_radius
         super().__init__(title, image)
