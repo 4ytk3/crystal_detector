@@ -9,7 +9,6 @@ class SpatialFilter(Image, ABC):
         self._title = self.set_title(image._title)
         self._gray_image = self.apply_filter(image._gray_image, *args)
         self._rgb_image = self.gray2rgb(self._gray_image)
-        self._display_image = self._rgb_image
 
     @abstractmethod
     def apply_filter(self):
