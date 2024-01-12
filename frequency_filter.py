@@ -1,20 +1,16 @@
-import os
-import sys
-from typing import Any
 import cv2
-import copy
 import numpy as np
+from image_processor import Image
 from abc import ABC, abstractmethod
-from image_processor import Image, OriginalImage, ImageProcessor
 from scipy.ndimage import maximum_filter
-from skimage.feature import peak_local_max
 
 class FFT(Image):
     def __init__(self, image: Image, *args):
         self._title = self.set_title(image._title)
         self._shifted_fft = self.get_fft(image._gray_image)
         self._fft_image = self.get_spectrum(self._shifted_fft)
-        self._display_image = self.gray2rgb(self._fft_image)
+        self._mask = self.make_mask(self._fft_image, *args)
+        self._masked_shifted_fft, self._masked_fft_image = self.apply_mask(self._shifted_fft, self._fft_image, self._mask)
 
     def set_title(self, title: str) -> str:
         return "FFT " + title.replace("Original ", "")
@@ -23,11 +19,22 @@ class FFT(Image):
         return np.fft.fftshift(np.fft.fft2(gray_image))
 
     def get_spectrum(self, shifted_fft):
-        return 20 * np.log(np.abs(shifted_fft))
+        return 20*np.log(np.abs(shifted_fft))
+
+    def make_mask(self, fft_image):
+        height, width = fft_image.shape[0], fft_image.shape[1]
+        mask = np.ones([height, width], dtype=np.uint8)
+        return mask
+
+    def apply_mask(self, shifted_fft, fft_image, mask):
+        masked_shifted_fft = shifted_fft[mask==0] = 0
+        masked_fft_image = fft_image*mask
+        return masked_shifted_fft, masked_fft_image
+
 class IFFT(Image):
-    def __init__(self, fft_image: FFT, *args):
-        self._title = self.set_title(fft_image._title)
-        self._ifft_image = self.get_ifft(fft_image._shifted_fft).real
+    def __init__(self, image: FFT, *args):
+        self._title = self.set_title(image._title)
+        self._ifft_image = self.get_ifft(image._shifted_fft)
 
     def set_title(self, title: str) -> str:
         return "IFFT " + title.replace("FFT", "")
@@ -35,115 +42,72 @@ class IFFT(Image):
     def get_ifft(self, shifted_fft):
         return np.abs(np.fft.ifft2(np.fft.fftshift(shifted_fft)))
 
-class SpatialFilter(Image, ABC):
-    def __init__(self, fft_image: FFT, *args):
-        self._title = self.set_title(fft_image._title)
-        self._masked_fft = self.apply_mask(fft_image._shifted_fft)
-        self._display_image = self._masked_fft
-
-    def apply_mask(self, shifted_fft, mask):
-        height, width = shifted_fft.shape[0], shifted_fft.shape[1]
-        mask = self.make_mask(height, width)
-        return shifted_fft*mask
-
-    @abstractmethod
-    def make_mask(self, shifted_fft, *args):
-        raise NotImplementedError()
-
-class LowpassFilter(SpatialFilter):
-    def __init__(self, fft_image: FFT, inner_radius=90):
-        super().__init__(fft_image, inner_radius)
+class LowpassFilter(FFT):
+    def __init__(self, image: FFT, inner_radius=90):
+        super().__init__(image, inner_radius)
 
     def set_title(self, title: str):
-        return "Lowpass " + title
+        return "Lowpass " + title.replace("Original ", "")
 
-    def make_mask(self, height, width, inner_radius):
+
+    def make_mask(self, image, inner_radius):
+        height, width = image.shape[0], image.shape[1]
         mask = np.zeros([height, width], dtype=np.uint8)
         cv2.circle(mask, center=(width//2, height//2), radius=inner_radius, color=255, thickness=-1)
         return mask
 
-class HighpassFilter(SpatialFilter):
+class HighpassFilter(FFT):
     def __init__(self, fft_image: FFT, outer_radius=80):
         super().__init__(fft_image, outer_radius)
 
     def set_title(self, title: str):
-        return "Highpass " + title
+        return "Highpass " + title.replace("Original ", "")
 
-    def make_mask(self, height, width, outer_radius):
+
+    def make_mask(self, shifted_fft, outer_radius):
+        height, width = shifted_fft.shape[0], shifted_fft.shape[1]
         mask = np.ones([height, width], dtype=np.uint8)
         cv2.circle(mask, center=(width//2, height//2), radius=outer_radius, color=0, thickness=-1)
         return mask
 
-class BandpassFilter(SpatialFilter):
-    def __init__(self, fft_image: FFT, outer_radius=100, inner_radius=70):
+class BandpassFilter(FFT):
+    def __init__(self, fft_image: FFT, outer_radius=100, inner_radius=50):
         super().__init__(fft_image, outer_radius, inner_radius)
 
     def set_title(self, title: str):
-        return "Bandpass " + title
+        return "Bandpass " + title.replace("Original ", "")
 
-    def make_mask(self, height, width, outer_radius, inner_radius):
+    def make_mask(self, shifted_fft, outer_radius, inner_radius):
+        height, width = shifted_fft.shape[0], shifted_fft.shape[1]
         mask = np.zeros([height, width], dtype=np.uint8)
         cv2.circle(mask, center=(width//2, height//2), radius=outer_radius, color=1, thickness=-1)
         cv2.circle(mask, center=(width//2, height//2), radius=inner_radius, color=0, thickness=-1)
         return mask
 
+class PeakFilter(FFT):
+    def __init__(self, image: FFT):
+        self._title = self.set_title(image._title)
+        self._peak_image = self.detect_peaks(image._masked_fft_image)
+        self._spot_image = self.peak2spot(self._peak_image)
+        self._fft_image = image._fft_image*self._spot_image
+        self._shifted_fft = image._shifted_fft
+        self._shifted_fft[self._spot_image==0] = 0
+        print(self._shifted_fft)
 
+    def set_title(self, title: str):
+        return "Peak " + title.replace("Original ", "")
 
-class BandFilter(FastFourierTransform):
-    def __init__(self, title, image, angle=0, size=10):
-        self._angle = angle
-        self._size = size
-        super().__init__(title, image)
-        self._title = "Band " + self._title
+    def detect_peaks(self, fft_image: np.ndarray, filter_size=5, order=0.9):
+        peak_image = fft_image
+        local_max = maximum_filter(peak_image, footprint=np.ones((filter_size, filter_size)), mode='constant')
+        peak_image[local_max!=peak_image] = [0]
+        peak_image[peak_image<=peak_image.max()*order] = [0]
+        peak_image[peak_image!=0] = [1]
+        return peak_image
 
-    def make_mask(self):
-        self._square_mask = np.zeros([self._height, self._width], dtype=np.uint8)
-        cv2.rectangle(self._square_mask, pt1=(int(self._width/2)-int(self._size/2),0), pt2=(int(self._width/2)+int(self._size/2),self._height), color=(255, 255, 255), thickness=-1)
-        self.rotate_mask()
-        self._mask = self._square_mask
-
-    def rotate_mask(self):
-        trans = cv2.getRotationMatrix2D(center=(self._center_x, self._center_y), angle=self._angle, scale=1.0)
-        self._square_mask = cv2.warpAffine(self._square_mask, trans, (self._width, self._height))
-
-class DoubleBandFilter(BandFilter):
-    def __init__(self, title, image, angle=0, size=10, outer_radius=100, inner_radius=70):
-        self._outer_radius, self._inner_radius = outer_radius, inner_radius
-        super().__init__(title, image, angle, size)
-        self._title = "Double " + self._title
-
-    def make_mask(self):
-        self._square_mask = np.zeros([self._height, self._width], dtype=np.uint8)
-        cv2.rectangle(self._square_mask, pt1=(int(self._width/2)-int(self._size/2),0), pt2=(int(self._width/2)+int(self._size/2),self._height), color=(255, 255, 255), thickness=-1)
-        self.rotate_mask()
-        self._circle_mask = np.zeros([self._height, self._width], dtype=np.uint8)
-        cv2.circle(self._circle_mask, center=(self._center_x, self._center_y), radius=self._outer_radius, color=1, thickness=-1)
-        cv2.circle(self._circle_mask, center=(self._center_x, self._center_y), radius=self._inner_radius, color=0, thickness=-1)
-        self._mask = self._square_mask * self._circle_mask
-
-class PeakFilter(FastFourierTransform):
-    def __init__(self, title, image, outer_radius=65, inner_radius=50):
-        self._outer_radius, self._inner_radius = outer_radius, inner_radius
-        super().__init__(title, image)
-        self._title = "Peak " + self._title
-
-    def make_mask(self):
-        self._circle_mask = np.zeros([self._height, self._width], dtype=np.uint8)
-        cv2.circle(self._circle_mask, center=(self._center_x, self._center_y), radius=self._outer_radius, color=1, thickness=-1)
-        cv2.circle(self._circle_mask, center=(self._center_x, self._center_y), radius=self._inner_radius, color=0, thickness=-1)
-        self._bandpass_image = self._fft_image*self._circle_mask
-        #self.view_image(image=self._bandpass_image)
-        self.detect_peaks()
-        self.indices = np.dstack(np.where(self._bandpass_image == 1))
-        for index in self.indices[0]:
-            cv2.circle(self._bandpass_image, center=(index[1], index[0]), radius=5, color=1, thickness=-1)
-        #self.view_image(image=self._bandpass_image)
-        self._mask = self._bandpass_image
-
-    def detect_peaks(self, filter_size=5, order=0.5):
-        self.__local_max = maximum_filter(self._bandpass_image, footprint=np.ones((filter_size, filter_size)), mode='constant')
-        #self.view_image(image=self.__local_max)
-        self._bandpass_image[self.__local_max!=self._bandpass_image] = [0]
-        self._bandpass_image[self._bandpass_image.max()!=self._bandpass_image] = [0]
-        self._bandpass_image[self._bandpass_image!=0] = [1]
-        #self.view_image(image=self._bandpass_image)
+    def peak2spot(self, peak_image: np.ndarray):
+        spot_image = peak_image.copy()
+        indices = np.dstack(np.where(spot_image == 1))
+        for index in indices[0]:
+            cv2.circle(spot_image, center=(index[1], index[0]), radius=5, color=1, thickness=-1)
+        return spot_image
