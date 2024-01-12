@@ -1,7 +1,7 @@
 from __future__ import annotations
 import cv2
 import numpy as np
-from image_processor import Image, OriginalImage, ImageProcessor
+from image_processor import Image
 from abc import ABC, abstractmethod
 
 class SpatialFilter(Image, ABC):
@@ -54,11 +54,3 @@ class BilateralFilter(SpatialFilter):
 
     def apply_filter(self, gray_image: np.ndarray, ksize: int = 3, sigmaColor=10, sigmaSpace=10):
         return cv2.bilateralFilter(src=np.float32(gray_image), d=ksize, sigmaColor=sigmaColor, sigmaSpace=sigmaSpace)
-
-
-if __name__ == '__main__':
-    title = "NaCl"
-    path = "image/NaCl1_noscale.jpg"
-    nacl = OriginalImage(title, path)
-    average = AverageFilter(nacl)
-    ImageProcessor.show_image(average)
