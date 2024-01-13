@@ -42,6 +42,7 @@ class IFFT(Image):
     def get_ifft(self, shifted_fft):
         return np.abs(np.fft.ifft2(np.fft.fftshift(shifted_fft)))
 
+
 class LowpassFilter(FFT):
     def __init__(self, image: FFT, inner_radius=90):
         super().__init__(image, inner_radius)
@@ -87,17 +88,16 @@ class BandpassFilter(FFT):
 class PeakFilter(FFT):
     def __init__(self, image: FFT):
         self._title = self.set_title(image._title)
-        self._peak_image = self.detect_peaks(image._masked_fft_image)
+        self._peak_image = self.detect_peaks(image._fft_image)
         self._spot_image = self.peak2spot(self._peak_image)
         self._fft_image = image._fft_image*self._spot_image
         self._shifted_fft = image._shifted_fft
         self._shifted_fft[self._spot_image==0] = 0
-        print(self._shifted_fft)
 
     def set_title(self, title: str):
         return "Peak " + title.replace("Original ", "")
 
-    def detect_peaks(self, fft_image: np.ndarray, filter_size=5, order=0.9):
+    def detect_peaks(self, fft_image: np.ndarray, filter_size=5, order=0.8):
         peak_image = fft_image
         local_max = maximum_filter(peak_image, footprint=np.ones((filter_size, filter_size)), mode='constant')
         peak_image[local_max!=peak_image] = [0]

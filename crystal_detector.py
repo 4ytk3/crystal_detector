@@ -7,11 +7,10 @@ if __name__ == '__main__':
     title = "NaCl"
     path = "image/NaCl1_noscale.jpg"
     nacl = OriginalImage(title, path)
-    bandpass = BandpassFilter(nacl, outer_radius=120)
-    Image.show_image(bandpass._title, bandpass._fft_image)
-    peak = PeakFilter(bandpass)
+    fft = FFT(nacl)
+    peak = PeakFilter(fft)
     Image.show_image(peak._title, peak._peak_image)
     Image.show_image(peak._title, peak._spot_image)
     Image.show_image(peak._title, peak._fft_image)
-    bandpass_ifft = IFFT(peak)
-    Image.show_image(bandpass_ifft._title, bandpass_ifft._ifft_image)
+    ifft = IFFT(peak)
+    Image.show_image(ifft._title, ifft._ifft_image)
