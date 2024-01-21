@@ -4,13 +4,11 @@ from frequency_filter import FFT, IFFT, LowpassFilter, HighpassFilter, BandpassF
 
 
 if __name__ == '__main__':
-    title = "NaCl"
+    title = "test"
     path = "image/NaCl1_noscale.jpg"
-    nacl = OriginalImage(title, path)
-    fft = FFT(nacl)
-    peak = PeakFilter(fft)
-    Image.show_image(peak._title, peak._peak_image)
-    Image.show_image(peak._title, peak._spot_image)
-    Image.show_image(peak._title, peak._fft_image)
-    ifft = IFFT(peak)
+    original = OriginalImage(title, path)
+    fft = FFT(original)
+    ifft = IFFT(fft)
+    Image.show_image(fft._title, fft._fft_image)
     Image.show_image(ifft._title, ifft._ifft_image)
+
