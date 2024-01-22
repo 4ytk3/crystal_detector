@@ -44,12 +44,11 @@ class IFFT(Image):
 
 
 class LowpassFilter(FFT):
-    def __init__(self, image: FFT, inner_radius=90):
+    def __init__(self, image: Image, inner_radius=90):
         super().__init__(image, inner_radius)
 
     def set_title(self, title: str):
         return "Lowpass " + title.replace("Original ", "")
-
 
     def make_mask(self, image, inner_radius):
         height, width = image.shape[0], image.shape[1]
@@ -58,12 +57,11 @@ class LowpassFilter(FFT):
         return mask
 
 class HighpassFilter(FFT):
-    def __init__(self, fft_image: FFT, outer_radius=80):
+    def __init__(self, fft_image: Image, outer_radius=80):
         super().__init__(fft_image, outer_radius)
 
     def set_title(self, title: str):
         return "Highpass " + title.replace("Original ", "")
-
 
     def make_mask(self, shifted_fft, outer_radius):
         height, width = shifted_fft.shape[0], shifted_fft.shape[1]
@@ -72,7 +70,7 @@ class HighpassFilter(FFT):
         return mask
 
 class BandpassFilter(FFT):
-    def __init__(self, fft_image: FFT, outer_radius=100, inner_radius=50):
+    def __init__(self, fft_image: Image, outer_radius=100, inner_radius=50):
         super().__init__(fft_image, outer_radius, inner_radius)
 
     def set_title(self, title: str):

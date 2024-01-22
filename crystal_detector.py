@@ -1,14 +1,14 @@
-from image_processor import Image, OriginalImage
+from image_processor import Image, Path2Image
 from spatial_filter import AverageFilter, GaussianFilter, MedianFilter, BilateralFilter
 from frequency_filter import FFT, IFFT, LowpassFilter, HighpassFilter, BandpassFilter, PeakFilter
 
 
 if __name__ == '__main__':
     title = "test"
-    path = "image/NaCl1_noscale.jpg"
-    original = OriginalImage(title, path)
+    path = "image/test.png"
+    original = Path2Image(title, path)
     fft = FFT(original)
-    ifft = IFFT(fft)
-    Image.show_image(fft._title, fft._fft_image)
+    highpass = HighpassFilter(original)
+    ifft = IFFT(highpass)
     Image.show_image(ifft._title, ifft._ifft_image)
 

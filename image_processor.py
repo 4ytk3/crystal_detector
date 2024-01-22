@@ -11,12 +11,6 @@ class Image(ABC): # Interface for Image
         raise NotImplementedError()
 
     @staticmethod
-    def path2rgb(path: str) -> np.ndarray:
-        bgr_image = cv2.imread(path)
-        rgb_image = cv2.cvtColor(bgr_image.astype(np.uint8), cv2.COLOR_BGR2RGB)
-        return rgb_image
-
-    @staticmethod
     def gray2rgb(image: np.ndarray) -> np.ndarray:
         rgb_image = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_GRAY2RGB)
         return rgb_image
@@ -51,7 +45,7 @@ class Image(ABC): # Interface for Image
         else:
             cv2.imwrite(path, image)
 
-class OriginalImage(Image):
+class Path2Image(Image):
     def __init__(self, title: str, path: str):
         self._title = self.set_title(title)
         self._rgb_image = self.path2rgb(path)
@@ -59,3 +53,9 @@ class OriginalImage(Image):
 
     def set_title(self, title: str) -> str:
         return "Original " + title
+
+    @staticmethod
+    def path2rgb(path: str) -> np.ndarray:
+        bgr_image = cv2.imread(path)
+        rgb_image = cv2.cvtColor(bgr_image.astype(np.uint8), cv2.COLOR_BGR2RGB)
+        return rgb_image
