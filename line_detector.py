@@ -6,16 +6,18 @@ import numpy as np
 from pylsd import lsd
 from image_processor import Image
 
+#TODO: add Line Detect Abstract class and define draw line functions
 class HoughTransform(Image):
     def __init__(self, image: Image):
-        self._title = "Hough " + self._title
-        self.draw_lines()
+        self._title = self.set_title(image._title)
+        self._gray_image = self.detect_lines(image._gray_image)
 
     def set_title(self, title: str):
         return "Hough " + title.replace("Original ", "")
 
-    def draw_lines(self):
-        _lines = cv2.HoughLines(self._gray_image.astype(np.uint8), 1, np.pi/360, 200)
+    def detect_lines(self, gray_image: np.ndarray):
+        _lines = cv2.HoughLines(gray_image.astype(np.uint8), 1, np.pi/360, 200)
+        detected_image = np.copy(gray_image)
         if _lines is not None:
             for line in _lines:
                 rho, theta = line[0]
@@ -27,46 +29,55 @@ class HoughTransform(Image):
                 y1 = int(y0 + 1000 * (a))
                 x2 = int(x0 - 1000 * (-b))
                 y2 = int(y0 - 1000 * (a))
-                cv2.line(self._process_image, (x1, y1), (x2, y2), (255, 0, 0), 3)
+                cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 3)
+            return detected_image
         else:
             print("Can't draw ht lines")
 
 class PHoughTransform(Image):
-    def __init__(self, title, image, threshold=500, minLineLength=30, maxLineGap=50):
+    def __init__(self, image: Image, threshold=500, minLineLength=30, maxLineGap=50):
         super().__init__(title, image)
-        self._title = "PHough " + self._title
-        self.draw_lines(threshold=threshold, minLineLength=minLineLength, maxLineGap=maxLineGap)
+        self._title = self.set_title(image._title)
+        self._gray_image = self.detect_lines(image._gray_image, threshold, minLineLength, maxLineGap)
 
-    def draw_lines(self, threshold, minLineLength, maxLineGap):
-        __lines = cv2.HoughLinesP(self._gray_image.astype(np.uint8), 10, np.pi/180, threshold=threshold, minLineLength=minLineLength, maxLineGap=maxLineGap)
-        if __lines is not None:
+    def set_title(self, title: str):
+        return "PHough " + title.replace("Original ", "")
+
+    def detect_lines(self, gray_image: np.ndarray, threshold, minLineLength, maxLineGap):
+        lines = cv2.HoughLinesP(gray_image.astype(np.uint8), 10, np.pi/180, threshold, minLineLength, maxLineGap)
+        detected_image = np.copy(gray_image)
+        if lines is not None:
             degs = []
-            for line in __lines:
+            for line in lines:
                 x1,y1,x2,y2 = line[0]
                 rad = math.atan2(x2-x1, y2-y1)
                 deg = rad*(180/np.pi)
                 deg = int(Decimal(deg).quantize(Decimal('1E1'), rounding=ROUND_HALF_UP)) #10の位に丸める
                 degs.append(deg)
             mode = statistics.mode(degs)
-            for line in __lines:
+            for line in lines:
                 x1,y1,x2,y2 = line[0]
                 rad = math.atan2(x2-x1, y2-y1)
                 deg = rad*(180/np.pi)
                 deg = int(Decimal(deg).quantize(Decimal('1E1'), rounding=ROUND_HALF_UP))
-                cv2.line(self._process_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
                 # if deg <= mode+5 and deg >= mode-5:
-                #     cv2.line(self._image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                #     cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+            return detected_image
         else:
             print("Can't draw pht lines")
 
 class LineSegmentDetector(Image):
-    def __init__(self, title, image):
-        super().__init__(title, image)
-        self._title = "LSD " + self._title
-        self.detect_lines()
+    def __init__(self, image: Image):
+        self._title = self.set_title(image._title)
+        self._gray_image = self.detect_lines(image._gray_image)
 
-    def detect_lines(self):
-        lines = lsd(self._gray_image)
+    def set_title(self, title: str):
+        return "LSD " + title.replace("Original ", "")
+
+    def detect_lines(self, gray_image: np.ndarray):
+        lines = lsd(gray_image)
+        detected_image = np.copy(gray_image)
         if lines is not None:
             degs = []
             line_infos = []
@@ -85,10 +96,10 @@ class LineSegmentDetector(Image):
             for line_info in line_infos:
                 x1, y1, x2, y2, deg = line_info
                 # if deg <= mode+20 and deg >= mode-20:
-                #     cv2.line(self._process_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                #     cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
                 #     mode_deg_line = [x1, y1, x2, y2, deg]
                 #     mode_deg_lines.append(mode_deg_line)
-                cv2.line(self._process_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
         else:
             print("Can't draw lsd lines")
 
