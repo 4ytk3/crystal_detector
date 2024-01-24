@@ -1,0 +1,155 @@
+import math
+import statistics
+from decimal import ROUND_HALF_UP, Decimal
+import cv2
+import numpy as np
+from pylsd import lsd
+from image_processor import Image
+
+class HoughTransform(Image):
+    def __init__(self, image: Image):
+        self._title = "Hough " + self._title
+        self.draw_lines()
+
+    def set_title(self, title: str):
+        return "Hough " + title.replace("Original ", "")
+
+    def draw_lines(self):
+        _lines = cv2.HoughLines(self._gray_image.astype(np.uint8), 1, np.pi/360, 200)
+        if _lines is not None:
+            for line in _lines:
+                rho, theta = line[0]
+                a = np.cos(theta)
+                b = np.sin(theta)
+                x0 = a * rho
+                y0 = b * rho
+                x1 = int(x0 + 1000 * (-b))
+                y1 = int(y0 + 1000 * (a))
+                x2 = int(x0 - 1000 * (-b))
+                y2 = int(y0 - 1000 * (a))
+                cv2.line(self._process_image, (x1, y1), (x2, y2), (255, 0, 0), 3)
+        else:
+            print("Can't draw ht lines")
+
+class PHoughTransform(Image):
+    def __init__(self, title, image, threshold=500, minLineLength=30, maxLineGap=50):
+        super().__init__(title, image)
+        self._title = "PHough " + self._title
+        self.draw_lines(threshold=threshold, minLineLength=minLineLength, maxLineGap=maxLineGap)
+
+    def draw_lines(self, threshold, minLineLength, maxLineGap):
+        __lines = cv2.HoughLinesP(self._gray_image.astype(np.uint8), 10, np.pi/180, threshold=threshold, minLineLength=minLineLength, maxLineGap=maxLineGap)
+        if __lines is not None:
+            degs = []
+            for line in __lines:
+                x1,y1,x2,y2 = line[0]
+                rad = math.atan2(x2-x1, y2-y1)
+                deg = rad*(180/np.pi)
+                deg = int(Decimal(deg).quantize(Decimal('1E1'), rounding=ROUND_HALF_UP)) #10の位に丸める
+                degs.append(deg)
+            mode = statistics.mode(degs)
+            for line in __lines:
+                x1,y1,x2,y2 = line[0]
+                rad = math.atan2(x2-x1, y2-y1)
+                deg = rad*(180/np.pi)
+                deg = int(Decimal(deg).quantize(Decimal('1E1'), rounding=ROUND_HALF_UP))
+                cv2.line(self._process_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                # if deg <= mode+5 and deg >= mode-5:
+                #     cv2.line(self._image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+        else:
+            print("Can't draw pht lines")
+
+class LineSegmentDetector(Image):
+    def __init__(self, title, image):
+        super().__init__(title, image)
+        self._title = "LSD " + self._title
+        self.detect_lines()
+
+    def detect_lines(self):
+        lines = lsd(self._gray_image)
+        if lines is not None:
+            degs = []
+            line_infos = []
+            for line in lines:
+                x1, y1, x2, y2 = int(line[0]), int(line[1]), int(line[2]), int(line[3])
+                rad = math.atan2(x2-x1, y2-y1)
+                deg = rad*(180/np.pi)
+                deg = int(Decimal(deg).quantize(Decimal('0'), rounding=ROUND_HALF_UP))
+                if deg <= 0:
+                    deg += 180
+                degs.append(deg)
+                tmp_list = [x1, y1, x2, y2, deg]
+                line_infos.append(tmp_list)
+            mode = statistics.mode(degs)
+            mode_deg_lines = []
+            for line_info in line_infos:
+                x1, y1, x2, y2, deg = line_info
+                # if deg <= mode+20 and deg >= mode-20:
+                #     cv2.line(self._process_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                #     mode_deg_line = [x1, y1, x2, y2, deg]
+                #     mode_deg_lines.append(mode_deg_line)
+                cv2.line(self._process_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+        else:
+            print("Can't draw lsd lines")
+
+class FastLineDetector(Image): #ToDo
+    def __init__(self):
+        super().__init__(title, image)
+        self._title = "LSD " + self._title
+        self.detect_lines()
+
+    def testFastLineDetector(fileImage):
+        colorimg = cv2.imread(fileImage, cv2.IMREAD_COLOR)
+        if colorimg is None:
+            return -1
+        image = cv2.cvtColor(colorimg.copy(), cv2.COLOR_BGR2GRAY)
+
+        # FLDインスタンス生成
+        length_threshold = 4 # 10
+        distance_threshold = 1.41421356
+        canny_th1 = 50.0
+        canny_th2 = 50.0
+        canny_aperture_size = 3
+        do_merge = False
+
+        # 高速ライン検出器生成
+        fld = cv2.ximgproc.createFastLineDetector(length_threshold,distance_threshold,
+                        canny_th1,canny_th2,canny_aperture_size,do_merge)
+        #fld = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD) # LSD
+
+        # ライン取得
+        lines = fld.detect(image)
+        #lines, width, prec, nfa = fld.detect(image) # LSD
+
+        # 検出線表示
+        drawnLines = np.zeros((image.shape[0],image.shape[1],3), np.uint8)
+        fld.drawSegments(drawnLines, lines)
+        cv2.imshow("Fast Line Detector(LINE)", drawnLines)
+
+        # 検出線と処理画像の合成表示
+        fld.drawSegments(colorimg, lines)
+        cv2.imshow("Fast Line Detector", colorimg)
+        cv2.waitKey()
+        return 0
+
+class DrawEdgeLine(Image):
+    def __init__(self, title, image):
+        super().__init__(title, image)
+        self._title = "DrawEdgeLine" + self._title
+        self.draw_lines()
+
+    def draw_lines(self, ):
+        w, h = self._image.shape[:2]
+        source_color = (0, 0, 0)
+        target_color = (255, 255, 255)
+        change_color = (255, 0, 0)
+
+        source_list = [(i, j) for j in range(h) for i in range(w) if tuple(self._image[i, j]) == source_color for l in range(j-1, j+2) for k in range(i-1, i+2) if 0 <= k < w and 0 <= l < h if tuple(self._image[k, l]) == target_color]
+        for i, j in source_list:
+            self._image[i, j] = change_color
+
+
+
+if __name__ == '__main__':
+    title = "NaCl"
+    image = '10033_nacl\\10033_nacl 001.jpg'
