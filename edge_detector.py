@@ -25,14 +25,22 @@ class PrewittEdgeDetector(Image):
         if ksize == 3:
             kernel_x = np.array([[1,1,1],[0,0,0],[-1,-1,-1]])
             kernel_y = np.array([[-1,0,1],[-1,0,1],[-1,0,1]])
-            return kernel_x, kernel_y
+        elif ksize == 5:
+            kernel_x = np.array([[2,2,2,2,2],[1,1,1,1,1],[0,0,0,0,0],[-1,-1,-1,-1,-1],[-2,-2,-2,-2,-2]])
+            kernel_y = np.array([[-2,-1,0,1,2],[-2,-1,0,1,2],[-2,-1,0,1,2],[-2,-1,0,1,2],[-2,-1,0,1,2]])
+        elif ksize == 7:
+            kernel_x = np.array([[3,3,3,3,3,3,3],[2,2,2,2,2,2,2],[1,1,1,1,1,1,1],[0,0,0,0,0,0,0],[-1,-1,-1,-1,-1,-1,-1],[-2,-2,-2,-2,-2,-2,-2],[-3,-3,-3,-3,-3,-3,-3]])
+            kernel_y = np.array([[-3,-2,-1,0,1,2,3],[-3,-2,-1,0,1,2,3],[-3,-2,-1,0,1,2,3],[-3,-2,-1,0,1,2,3],[-3,-2,-1,0,1,2,3],[-3,-2,-1,0,1,2,3],[-3,-2,-1,0,1,2,3]])
+        else:
+            print(f"ksize={ksize} dosen't support")
+
+        return kernel_x, kernel_y
 
     def prewitt_edge(self, gray_image: np.ndarray, ksize: int):
         kernel_x, kernel_y = self.make_kernel(ksize)
         prewitt_x = cv2.filter2D(gray_image, -1, kernel_x)
         prewitt_y = cv2.filter2D(gray_image, -1, kernel_y)
         return np.sqrt(prewitt_x**2 + prewitt_y**2)
-
 
 class SobelEdgeDetector(Image):
     def __init__(self, image: Image, dx=1, dy=1, ksize=3, amp=3):
