@@ -45,6 +45,20 @@ class Image(ABC): # Interface for Image
         else:
             cv2.imwrite(path, image)
 
+class ComposeImage(Image):
+    def __init__(self, original_image: Image, bin_image: Image):
+        self._title = self.set_title(bin_image._title)
+        self._rgb_image = self.compose_image(original_image._rgb_image, bin_image._gray_image)
+
+    def set_title(self, title: str) -> str:
+        return "Compose " + title
+
+    def compose_image(self, original_image: np.ndarray, bin_image: np.ndarray):
+        rgb_image = self.gray2rgb(bin_image)
+        composed_image = original_image[(rgb_image==(255,255,255)).all(axis=-1)]=(0, 0, 200)
+        return composed_image
+
+
 class Path2Image(Image):
     def __init__(self, title: str, path: str):
         self._title = self.set_title(title)
