@@ -265,7 +265,7 @@ if __name__ == '__main__':
     line_detectiors = [PHoughTransform(filter), HoughTransform(filter), LineSegmentDetector(filter)]
 
     for i in noise_filters:
-        noise_filter = i(Image = original)
+        noise_filter = i(original)
         for j in edge_filters:
             edge_filter = j(noise_filter)
             for k in line_detectiors:
