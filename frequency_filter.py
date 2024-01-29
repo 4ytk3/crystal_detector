@@ -70,7 +70,7 @@ class HighpassFilter(FFT):
         return mask
 
 class BandpassFilter(FFT):
-    def __init__(self, fft_image: Image, outer_radius=130, inner_radius=80):
+    def __init__(self, fft_image: Image, outer_radius=150, inner_radius=50):
         super().__init__(fft_image, outer_radius, inner_radius)
 
     def set_title(self, title: str):
