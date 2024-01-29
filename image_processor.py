@@ -51,12 +51,13 @@ class ComposeImage(Image):
         self._rgb_image = self.compose_image(original_image._rgb_image, bin_image._gray_image)
 
     def set_title(self, title: str) -> str:
-        return "Compose " + title
+        return "Composed " + title
 
     def compose_image(self, original_image: np.ndarray, bin_image: np.ndarray):
-        rgb_image = self.gray2rgb(bin_image)
-        composed_image = original_image[(rgb_image==(255,255,255)).all(axis=-1)]=(0, 0, 200)
-        return composed_image
+        rgb_original = original_image
+        rgb_bin = self.gray2rgb(bin_image)
+        rgb_original[(rgb_bin==(255,255,255)).all(axis=-1)]=(0, 0, 200)
+        return rgb_original
 
 
 class Path2Image(Image):

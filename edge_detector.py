@@ -54,12 +54,12 @@ class SobelEdgeDetector(Image):
         return cv2.convertScaleAbs(cv2.Sobel(gray_image.astype(np.uint8), cv2.CV_8U, dx, dy, ksize=ksize)) * amp
 
 class LaplacianEdgeDetector(Image):
-    def __init__(self, image: Image, amp=10):
+    def __init__(self, image: Image, ksize=3, amp=10):
         self._title = self.set_title(image._title)
-        self._gray_image = self.laplacian_edge(image._gray_image, amp)
+        self._gray_image = self.laplacian_edge(image._gray_image, ksize, amp)
 
     def set_title(self, title: str):
         return "Laplacian " + title.replace("Original ", "")
 
-    def laplacian_edge(self, gray_image: np.ndarray, amp):
-        return cv2.convertScaleAbs(cv2.Laplacian(gray_image.astype(np.uint8), cv2.CV_8U)) * amp
+    def laplacian_edge(self, gray_image: np.ndarray, ksize, amp):
+        return cv2.convertScaleAbs(cv2.Laplacian(gray_image.astype(np.uint8), cv2.CV_8U, ksize=ksize)) * amp

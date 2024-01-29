@@ -42,14 +42,14 @@ class MedianFilter(SpatialFilter):
         return "Median " + title.replace("Original ", "")
 
     def apply_filter(self, gray_image: np.ndarray, ksize: int = 3):
-        return cv2.medianBlur(src=np.float32(gray_image), ksize=ksize)
+        return cv2.medianBlur(src=gray_image, ksize=ksize)
 
 class BilateralFilter(SpatialFilter):
-    def __init__(self, image: Image, ksize: int = 3, sigmaColor=10, sigmaSpace=10):
+    def __init__(self, image: Image, ksize: int = 3, sigmaColor=10, sigmaSpace=20):
         super().__init__(image, ksize, sigmaColor, sigmaSpace)
 
     def set_title(self, title: str):
         return "Bilateral " + title.replace("Original ", "")
 
-    def apply_filter(self, gray_image: np.ndarray, ksize: int = 3, sigmaColor=10, sigmaSpace=10):
+    def apply_filter(self, gray_image: np.ndarray, ksize: int = 3, sigmaColor=50, sigmaSpace=50):
         return cv2.bilateralFilter(src=np.float32(gray_image), d=ksize, sigmaColor=sigmaColor, sigmaSpace=sigmaSpace)

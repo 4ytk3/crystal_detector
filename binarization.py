@@ -5,7 +5,7 @@ from image_processor import Image
 class OtsuBinarization(Image):
     def __init__(self, image: Image, threshold=128):
         self._title = self.set_title(image._title)
-        ret, self._gray_image = self.otsu_bin(image._gray_image, threshold)
+        ret, self._gray_image = self.otsu_bin(image._gray_image.astype("uint8"), threshold)
 
     def set_title(self, title: str):
         return "Binarization " + title.replace("Original ", "")
