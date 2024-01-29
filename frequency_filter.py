@@ -34,7 +34,7 @@ class FFT(Image):
 class IFFT(Image):
     def __init__(self, image: FFT, *args):
         self._title = self.set_title(image._title)
-        self._ifft_image = self.get_ifft(image._shifted_fft)
+        self._gray_image = self.get_ifft(image._shifted_fft)
 
     def set_title(self, title: str) -> str:
         return "IFFT " + title.replace("FFT", "")
@@ -70,7 +70,7 @@ class HighpassFilter(FFT):
         return mask
 
 class BandpassFilter(FFT):
-    def __init__(self, fft_image: Image, outer_radius=100, inner_radius=50):
+    def __init__(self, fft_image: Image, outer_radius=150, inner_radius=50):
         super().__init__(fft_image, outer_radius, inner_radius)
 
     def set_title(self, title: str):
@@ -86,7 +86,7 @@ class BandpassFilter(FFT):
 class PeakFilter(FFT):
     def __init__(self, image: FFT):
         self._title = self.set_title(image._title)
-        self._peak_image = self.detect_peaks(image._fft_image)
+        self._peak_image = self.detect_peaks(image._masked_fft_image)
         self._spot_image = self.peak2spot(self._peak_image)
         self._fft_image = image._fft_image*self._spot_image
         self._shifted_fft = image._shifted_fft
@@ -99,7 +99,8 @@ class PeakFilter(FFT):
         peak_image = fft_image
         local_max = maximum_filter(peak_image, footprint=np.ones((filter_size, filter_size)), mode='constant')
         peak_image[local_max!=peak_image] = [0]
-        peak_image[peak_image<=peak_image.max()*order] = [0]
+        peak_image[peak_image!=peak_image.max()] = [0]
+        #peak_image[peak_image<=peak_image.max()*order] = [0]
         peak_image[peak_image!=0] = [1]
         return peak_image
 

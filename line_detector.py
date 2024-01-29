@@ -100,6 +100,7 @@ class LineSegmentDetector(Image):
                 #     mode_deg_line = [x1, y1, x2, y2, deg]
                 #     mode_deg_lines.append(mode_deg_line)
                 cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+            return detected_image
         else:
             print("Can't draw lsd lines")
 
