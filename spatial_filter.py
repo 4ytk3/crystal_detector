@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 class SpatialFilter(Image, ABC):
     def __init__(self, image: Image, *args):
         self._title = self.set_title(image._title, *args)
-        self._gray_image = self.apply_filter(image._gray_image, *args)
+        self._gray_image = self.apply_filter(image._gray_image.copy(), *args)
         self._rgb_image = self.gray2rgb(self._gray_image)
 
     @abstractmethod

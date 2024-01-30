@@ -11,7 +11,7 @@ if __name__ == '__main__':
     # title = "unclear"
     # path = "image/unclear.jpg"
     title = "clear"
-    path = "image/clear.jpg"
+    path = 'clear/clear.jpg'
     original = Path2Image(title, path)
 
 
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     high_masks = [high_ave3,high_ave5,high_med3,high_med5,high_gau3,high_gau5,high_bil3,high_bil5,high_low_ifft]
 
     for i in high_masks:
-        Image.save_image(i._title, i._masked_fft_image, dir='clear/highpass')
+        Image.save_image(i._title, i._fft_image, dir='clear/highpass')
 
     # prewitt
     pre3_ave3 = PrewittEdgeDetector(ave3, ksize=3)
@@ -319,7 +319,7 @@ if __name__ == '__main__':
     lsds = [lsd_can_ave3,lsd_can_ave5,lsd_high_ave3,lsd_high_ave5,lsd_pre3_ave3,lsd_pre3_ave5,lsd_pre5_ave3,lsd_pre5_ave5,lsd_sob3_ave3,lsd_sob3_ave5,lsd_sob5_ave3,lsd_sob5_ave5,lsd_lap3_ave3,lsd_lap3_ave5,lsd_lap5_ave3,lsd_lap5_ave5,lsd_can_med3,lsd_can_med5,lsd_high_med3,lsd_high_med5,lsd_pre3_med3,lsd_pre3_med5,lsd_pre5_med3,lsd_pre5_med5,lsd_sob3_med3,lsd_sob3_med5,lsd_sob5_med3,lsd_sob5_med5,lsd_lap3_med3,lsd_lap3_med5,lsd_lap5_med3,lsd_lap5_med5,lsd_can_gau3,lsd_can_gau5,lsd_high_gau3,lsd_high_gau5,lsd_pre3_gau3,lsd_pre3_gau5,lsd_pre5_gau3,lsd_pre5_gau5,lsd_sob3_gau3,lsd_sob3_gau5,lsd_sob5_gau3,lsd_sob5_gau5,lsd_lap3_gau3,lsd_lap3_gau5,lsd_lap5_gau3,lsd_lap5_gau5,lsd_can_bil3,lsd_can_bil5,lsd_high_bil3,lsd_high_bil5,lsd_pre3_bil3,lsd_pre3_bil5,lsd_pre5_bil3,lsd_pre5_bil5,lsd_sob3_bil3,lsd_sob3_bil5,lsd_sob5_bil3,lsd_sob5_bil5,lsd_lap3_bil3,lsd_lap3_bil5,lsd_lap5_bil3,lsd_lap5_bil5,lsd_can_low_ifft,lsd_high_low_ifft,lsd_pre3_low_ifft,lsd_pre5_low_ifft,lsd_sob3_low_ifft,lsd_sob5_low_ifft,lsd_lap3_low_ifft,lsd_lap5_low_ifft]
 
     compose = ComposeImage(original, lsd_can_ave3)
-    Image.show_image(lsd_can_ave3._title, compose._rgb_image)
+    #Image.show_image(lsd_can_ave3._title, compose._rgb_image)
     Image.save_image(phough_can_ave3._title, compose._rgb_image, dir='clear/phough')
 
     for i in phoughs:
@@ -342,7 +342,7 @@ if __name__ == '__main__':
 
     # bandpass = BandpassFilter(original, outer_radius=150, inner_radius=50)
     # Image.show_image(bandpass._title, bandpass._fft_image)
-    # Image.show_image(bandpass._title, bandpass._masked_fft_image)
+    # Image.show_image(bandpass._title, bandpass._fft_image)
     # peak = PeakFilter(bandpass)
     # Image.show_image(peak._title, peak._spot_image)
     # peak_ifft = IFFT(peak)

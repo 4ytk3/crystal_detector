@@ -12,13 +12,13 @@ class Image(ABC): # Interface for Image
 
     @staticmethod
     def gray2rgb(image: np.ndarray) -> np.ndarray:
-        rgb_image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+        rgb_image = cv2.cvtColor(image.astype(np.float32), cv2.COLOR_GRAY2RGB)
         #rgb_image = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_GRAY2RGB)
         return rgb_image
 
     @staticmethod
     def rgb2gray(image: np.ndarray) -> np.ndarray:
-        gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        gray_image = cv2.cvtColor(image.astype(np.float32), cv2.COLOR_RGB2GRAY)
         #gray_image = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_RGB2GRAY)
         return gray_image
 
@@ -61,8 +61,8 @@ class ComposeImage(Image):
         return "Composed " + title
 
     def compose_image(self, original_image: np.ndarray, bin_image: np.ndarray):
-        rgb_original = original_image
-        rgb_bin = self.gray2rgb(bin_image)
+        rgb_original = original_image.copy()
+        rgb_bin = self.gray2rgb(bin_image.copy())
         rgb_original[(rgb_bin==(255,255,255)).all(axis=-1)]=(0, 0, 200)
         return rgb_original
 

@@ -7,7 +7,7 @@ from scipy.ndimage import maximum_filter
 class FFT(Image):
     def __init__(self, image: Image, *args):
         self._title = self.set_title(image._title)
-        self._shifted_fft = self.get_fft(image._gray_image)
+        self._shifted_fft = self.get_fft(image._gray_image.copy())
         self._fft_image = self.get_spectrum(self._shifted_fft)
 
     def set_title(self, title: str) -> str:
@@ -23,7 +23,7 @@ class FFT(Image):
 class IFFT(Image):
     def __init__(self, image: FFT, *args):
         self._title = self.set_title(image._title)
-        self._gray_image = self.get_ifft(image._shifted_fft)
+        self._gray_image = self.get_ifft(image._shifted_fft.copy())
 
     def set_title(self, title: str) -> str:
         return "IFFT " + title.replace("FFT", "")

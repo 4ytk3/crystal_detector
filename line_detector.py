@@ -10,13 +10,13 @@ from image_processor import Image
 class HoughTransform(Image):
     def __init__(self, image: Image):
         self._title = self.set_title(image._title)
-        self._gray_image = self.detect_lines(image._gray_image)
+        self._gray_image = self.detect_lines(image._gray_image.copy())
 
     def set_title(self, title: str):
         return "Hough " + title.replace("Original ", "")
 
     def detect_lines(self, gray_image: np.ndarray):
-        _lines = cv2.HoughLines(gray_image, 1, np.pi/360, 200)
+        _lines = cv2.HoughLines(gray_image.astype(np.uint8), 1, np.pi/360, 200)
         detected_image = gray_image.copy()
         if _lines is not None:
             for line in _lines:
@@ -37,13 +37,13 @@ class HoughTransform(Image):
 class PHoughTransform(Image):
     def __init__(self, image: Image, threshold=100, minLineLength=50, maxLineGap=5):
         self._title = self.set_title(image._title)
-        self._gray_image = self.detect_lines(image._gray_image, threshold, minLineLength, maxLineGap)
+        self._gray_image = self.detect_lines(image._gray_image.copy(), threshold, minLineLength, maxLineGap)
 
     def set_title(self, title: str):
         return "PHough " + title.replace("Original ", "")
 
     def detect_lines(self, gray_image: np.ndarray, threshold, minLineLength, maxLineGap):
-        lines = cv2.HoughLinesP(gray_image, 1, np.pi/180, threshold, minLineLength, maxLineGap)
+        lines = cv2.HoughLinesP(gray_image.astype(np.uint8), 1, np.pi/180, threshold, minLineLength, maxLineGap)
         detected_image = gray_image.copy()
         if lines is not None:
             degs = []
@@ -69,7 +69,7 @@ class PHoughTransform(Image):
 class LineSegmentDetector(Image):
     def __init__(self, image: Image):
         self._title = self.set_title(image._title)
-        self._gray_image = self.detect_lines(image._gray_image)
+        self._gray_image = self.detect_lines(image._gray_image.copy())
 
     def set_title(self, title: str):
         return "LSD " + title.replace("Original ", "")
