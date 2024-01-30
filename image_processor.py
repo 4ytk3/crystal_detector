@@ -12,12 +12,14 @@ class Image(ABC): # Interface for Image
 
     @staticmethod
     def gray2rgb(image: np.ndarray) -> np.ndarray:
-        rgb_image = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_GRAY2RGB)
+        rgb_image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+        #rgb_image = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_GRAY2RGB)
         return rgb_image
 
     @staticmethod
     def rgb2gray(image: np.ndarray) -> np.ndarray:
-        gray_image = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_RGB2GRAY)
+        gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        #gray_image = cv2.cvtColor(image.astype(np.uint8), cv2.COLOR_RGB2GRAY)
         return gray_image
 
     @staticmethod
@@ -43,10 +45,15 @@ class Image(ABC): # Interface for Image
             bgr_image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
             cv2.imwrite(path, bgr_image)
         else:
+            # try:
             cv2.imwrite(path, image)
+            # except:
+            #     cv2.imwrite(path, image.astype(np.uint8))
 
 class ComposeImage(Image):
     def __init__(self, original_image: Image, bin_image: Image):
+        # rgb_image = original_image._rgb_image.astype(np.uint8).copy()
+        # gray_image = bin_image._gray_image.astype(np.uint8).copy()
         self._title = self.set_title(bin_image._title)
         self._rgb_image = self.compose_image(original_image._rgb_image, bin_image._gray_image)
 
@@ -72,5 +79,6 @@ class Path2Image(Image):
     @staticmethod
     def path2rgb(path: str) -> np.ndarray:
         bgr_image = cv2.imread(path)
-        rgb_image = cv2.cvtColor(bgr_image.astype(np.uint8), cv2.COLOR_BGR2RGB)
+        rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
+        #rgb_image = cv2.cvtColor(bgr_image.astype(np.uint8), cv2.COLOR_BGR2RGB)
         return rgb_image

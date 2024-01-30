@@ -16,8 +16,8 @@ class HoughTransform(Image):
         return "Hough " + title.replace("Original ", "")
 
     def detect_lines(self, gray_image: np.ndarray):
-        _lines = cv2.HoughLines(gray_image.astype(np.uint8), 1, np.pi/360, 200)
-        detected_image = np.copy(gray_image)
+        _lines = cv2.HoughLines(gray_image, 1, np.pi/360, 200)
+        detected_image = gray_image.copy()
         if _lines is not None:
             for line in _lines:
                 rho, theta = line[0]
@@ -35,7 +35,7 @@ class HoughTransform(Image):
             print("Can't draw ht lines")
 
 class PHoughTransform(Image):
-    def __init__(self, image: Image, threshold=200, minLineLength=30, maxLineGap=50):
+    def __init__(self, image: Image, threshold=100, minLineLength=50, maxLineGap=5):
         self._title = self.set_title(image._title)
         self._gray_image = self.detect_lines(image._gray_image, threshold, minLineLength, maxLineGap)
 
@@ -43,8 +43,8 @@ class PHoughTransform(Image):
         return "PHough " + title.replace("Original ", "")
 
     def detect_lines(self, gray_image: np.ndarray, threshold, minLineLength, maxLineGap):
-        lines = cv2.HoughLinesP(gray_image.astype(np.uint8), 10, np.pi/180, threshold, minLineLength, maxLineGap)
-        detected_image = np.copy(gray_image)
+        lines = cv2.HoughLinesP(gray_image, 1, np.pi/180, threshold, minLineLength, maxLineGap)
+        detected_image = gray_image.copy()
         if lines is not None:
             degs = []
             for line in lines:
@@ -60,8 +60,8 @@ class PHoughTransform(Image):
                 deg = rad*(180/np.pi)
                 deg = int(Decimal(deg).quantize(Decimal('1E1'), rounding=ROUND_HALF_UP))
                 cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
-                # if deg <= mode+5 and deg >= mode-5:
-                #     cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                if deg <= mode+5 and deg >= mode-5:
+                    cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
             return detected_image
         else:
             print("Can't draw pht lines")
@@ -76,7 +76,7 @@ class LineSegmentDetector(Image):
 
     def detect_lines(self, gray_image: np.ndarray):
         lines = lsd(gray_image)
-        detected_image = np.copy(gray_image)
+        detected_image = gray_image.copy()
         if lines is not None:
             degs = []
             line_infos = []
@@ -90,15 +90,18 @@ class LineSegmentDetector(Image):
                 degs.append(deg)
                 tmp_list = [x1, y1, x2, y2, deg]
                 line_infos.append(tmp_list)
-            mode = statistics.mode(degs)
-            mode_deg_lines = []
+
             for line_info in line_infos:
                 x1, y1, x2, y2, deg = line_info
-                # if deg <= mode+20 and deg >= mode-20:
-                #     cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
-                #     mode_deg_line = [x1, y1, x2, y2, deg]
-                #     mode_deg_lines.append(mode_deg_line)
-                cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                # try:
+                #     mode = statistics.mode(degs)
+                #     mode_deg_lines = []
+                #     if deg <= mode+20 and deg >= mode-20:
+                #         cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                #         mode_deg_line = [x1, y1, x2, y2, deg]
+                #         mode_deg_lines.append(mode_deg_line)
+                # except:
+                cv2.line(detected_image, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 1)
             return detected_image
         else:
             print("Can't draw lsd lines")

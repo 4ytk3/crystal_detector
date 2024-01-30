@@ -11,15 +11,15 @@ class CannyEdgeDetector(Image):
         return "Canny " + title.replace("Original ", "")
 
     def canny_edge(self, gray_image: np.ndarray, min_val, max_val):
-        return cv2.Canny(gray_image.astype(np.uint8), threshold1=min_val, threshold2=max_val, L2gradient=True)
+        return cv2.Canny(gray_image, threshold1=min_val, threshold2=max_val, L2gradient=True)
 
 class PrewittEdgeDetector(Image):
     def __init__(self, image: Image, ksize=3):
-        self._title = self.set_title(image._title)
+        self._title = self.set_title(image._title, ksize)
         self._gray_image = self.prewitt_edge(image._gray_image, ksize)
 
-    def set_title(self, title: str):
-        return "Prewitt " + title.replace("Original ", "")
+    def set_title(self, title: str, ksize: int):
+        return f"Prewitt{ksize} " + title.replace("Original ", "")
 
     def make_kernel(self, ksize):
         if ksize == 3:
@@ -44,22 +44,22 @@ class PrewittEdgeDetector(Image):
 
 class SobelEdgeDetector(Image):
     def __init__(self, image: Image, dx=1, dy=1, ksize=3, amp=3):
-        self._title = self.set_title(image._title)
+        self._title = self.set_title(image._title, ksize)
         self._gray_image = self.sobel_edge(image._gray_image, dx, dy, ksize, amp)
 
-    def set_title(self, title: str):
-        return "Sobel " + title.replace("Original ", "")
+    def set_title(self, title: str, ksize: int):
+        return f"Sobel{ksize} " + title.replace("Original ", "")
 
     def sobel_edge(self, gray_image: np.ndarray, dx, dy, ksize, amp):
-        return cv2.convertScaleAbs(cv2.Sobel(gray_image.astype(np.uint8), cv2.CV_8U, dx, dy, ksize=ksize)) * amp
+        return cv2.convertScaleAbs(cv2.Sobel(gray_image, cv2.CV_8U, dx, dy, ksize=ksize)) * amp
 
 class LaplacianEdgeDetector(Image):
     def __init__(self, image: Image, ksize=3, amp=10):
-        self._title = self.set_title(image._title)
+        self._title = self.set_title(image._title, ksize)
         self._gray_image = self.laplacian_edge(image._gray_image, ksize, amp)
 
-    def set_title(self, title: str):
-        return "Laplacian " + title.replace("Original ", "")
+    def set_title(self, title: str, ksize: int):
+        return f"Laplacian{ksize} " + title.replace("Original ", "")
 
     def laplacian_edge(self, gray_image: np.ndarray, ksize, amp):
-        return cv2.convertScaleAbs(cv2.Laplacian(gray_image.astype(np.uint8), cv2.CV_8U, ksize=ksize)) * amp
+        return cv2.convertScaleAbs(cv2.Laplacian(gray_image, cv2.CV_8U, ksize=ksize)) * amp
