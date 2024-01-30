@@ -53,7 +53,7 @@ class LowpassFilter(FFT):
     def make_mask(self, image, inner_radius):
         height, width = image.shape[0], image.shape[1]
         mask = np.zeros([height, width], dtype=np.uint8)
-        cv2.circle(mask, center=(width//2, height//2), radius=inner_radius, color=255, thickness=-1)
+        cv2.circle(mask, center=(width//2, height//2), radius=inner_radius, color=1, thickness=-1)
         return mask
 
 class HighpassFilter(FFT):
