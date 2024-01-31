@@ -117,5 +117,5 @@ class PeakFilter(FrequencyFilter):
         spot_image = peak_image.copy()
         indices = np.dstack(np.where(spot_image == 1))
         for index in indices[0]:
-            cv2.circle(spot_image, center=(index[1], index[0]), radius=3, color=1, thickness=-1)
+            cv2.circle(spot_image, center=(index[1], index[0]), radius=4, color=1, thickness=-1)
         return spot_image

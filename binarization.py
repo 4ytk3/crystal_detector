@@ -11,7 +11,7 @@ class OtsuBinarization(Image):
         return "Binarization " + title.replace("Original ", "")
 
     def otsu_bin(self, gray_image: np.ndarray, threshold):
-        return cv2.threshold(gray_image, threshold, 255, cv2.THRESH_OTSU)
+        return cv2.threshold(gray_image.astype(np.uint8), threshold, 255, cv2.THRESH_OTSU)
 
 class AdaptiveBinarization(Image):
     def __init__(self, image: Image, blockSize=5):

@@ -50,6 +50,18 @@ class Image(ABC): # Interface for Image
             # except:
             #     cv2.imwrite(path, image.astype(np.uint8))
 
+    @staticmethod
+    def pixel_counter(title: str, image: np.ndarray, color=[0,0,255]):
+        counter = 0
+        color = np.array(color)
+        height, width = image.shape[0], image.shape[1]
+        for i in range(height):
+            for j in range(width):
+                pixel = image[i, j]
+                if (pixel == color).all():
+                    counter += 1
+        print(f"{title}'s number of {color} pixel is {counter}")
+
 class ComposeImage(Image):
     def __init__(self, original_image: Image, bin_image: Image):
         # rgb_image = original_image._rgb_image.astype(np.uint8).copy()
@@ -63,7 +75,7 @@ class ComposeImage(Image):
     def compose_image(self, original_image: np.ndarray, bin_image: np.ndarray):
         rgb_original = original_image.copy()
         rgb_bin = self.gray2rgb(bin_image.copy())
-        rgb_original[(rgb_bin==(255,255,255)).all(axis=-1)]=(0, 0, 200)
+        rgb_original[(rgb_bin==(255,255,255)).all(axis=-1)]=(0, 0, 255)
         return rgb_original
 
 
