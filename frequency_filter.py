@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 from image_processor import Image
-from abc import ABC, abstractmethod
 from scipy.ndimage import maximum_filter
 
 class FFT(Image):
