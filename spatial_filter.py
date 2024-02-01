@@ -45,7 +45,7 @@ class MedianFilter(SpatialFilter):
         return cv2.medianBlur(src=gray_image, ksize=ksize)
 
 class BilateralFilter(SpatialFilter):
-    def __init__(self, image: Image, ksize: int = 3, sigmaColor=10, sigmaSpace=20):
+    def __init__(self, image: Image, ksize: int = 3, sigmaColor=100, sigmaSpace=100):
         super().__init__(image, ksize, sigmaColor, sigmaSpace)
 
     def set_title(self, title: str, ksize: int, *args):

@@ -3,7 +3,7 @@ import numpy as np
 from image_processor import Image
 
 class CannyEdgeDetector(Image):
-    def __init__(self, image: Image, min_val=70, max_val=150):
+    def __init__(self, image: Image, min_val=150, max_val=200):
         self._title = self.set_title(image._title)
         self._gray_image = self.canny_edge(image._gray_image.copy(), min_val, max_val)
 
@@ -51,7 +51,7 @@ class SobelEdgeDetector(Image):
         return f"Sobel{ksize} " + title.replace("Original ", "")
 
     def sobel_edge(self, gray_image: np.ndarray, dx, dy, ksize, amp):
-        return cv2.convertScaleAbs(cv2.Sobel(gray_image, cv2.CV_8U, dx, dy, ksize=ksize)) * amp
+        return cv2.convertScaleAbs(cv2.Sobel(gray_image.astype(np.uint8), cv2.CV_8U, dx, dy, ksize=ksize)) * amp
 
 class LaplacianEdgeDetector(Image):
     def __init__(self, image: Image, ksize=3, amp=10):
@@ -62,4 +62,4 @@ class LaplacianEdgeDetector(Image):
         return f"Laplacian{ksize} " + title.replace("Original ", "")
 
     def laplacian_edge(self, gray_image: np.ndarray, ksize, amp):
-        return cv2.convertScaleAbs(cv2.Laplacian(gray_image.astype(np.float64), cv2.CV_64F, ksize=ksize)) * amp
+        return cv2.convertScaleAbs(cv2.Laplacian(gray_image.astype(np.uint8), cv2.CV_8U, ksize=ksize)) * amp
