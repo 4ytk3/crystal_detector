@@ -35,7 +35,7 @@ class HoughTransform(Image):
             print("Can't draw ht lines")
 
 class PHoughTransform(Image):
-    def __init__(self, image: Image, threshold=200, minLineLength=50, maxLineGap=30):
+    def __init__(self, image: Image, threshold=100, minLineLength=10, maxLineGap=50):
         self._title = self.set_title(image._title)
         self._gray_image = self.detect_lines(image._gray_image.copy(), threshold, minLineLength, maxLineGap)
 
