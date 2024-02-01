@@ -3,7 +3,7 @@ import numpy as np
 from image_processor import Image
 
 class CannyEdgeDetector(Image):
-    def __init__(self, image: Image, min_val=150, max_val=200):
+    def __init__(self, image: Image, min_val=100, max_val=300):
         self._title = self.set_title(image._title)
         self._gray_image = self.canny_edge(image._gray_image.copy(), min_val, max_val)
 
