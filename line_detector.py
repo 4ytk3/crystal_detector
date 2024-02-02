@@ -35,7 +35,7 @@ class HoughTransform(Image):
             print("Can't draw ht lines")
 
 class PHoughTransform(Image):
-    def __init__(self, image: Image, threshold=100, minLineLength=10, maxLineGap=50):
+    def __init__(self, image: Image, threshold=200, minLineLength=50, maxLineGap=10):
         self._title = self.set_title(image._title)
         self._gray_image = self.detect_lines(image._gray_image.copy(), threshold, minLineLength, maxLineGap)
 
@@ -93,15 +93,16 @@ class LineSegmentDetector(Image):
 
             for line_info in line_infos:
                 x1, y1, x2, y2, deg = line_info
-                # try:
-                #     mode = statistics.mode(degs)
-                #     mode_deg_lines = []
-                #     if deg <= mode+20 and deg >= mode-20:
-                #         cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
-                #         mode_deg_line = [x1, y1, x2, y2, deg]
-                #         mode_deg_lines.append(mode_deg_line)
-                # except:
-                cv2.line(detected_image, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 1)
+                try:
+                    mode = statistics.mode(degs)
+                    # mode_deg_lines = []
+                    if deg <= mode+2 and deg >= mode-2:
+                        cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                        # mode_deg_line = [x1, y1, x2, y2, deg]
+                        # mode_deg_lines.append(mode_deg_line)
+                except Exception as e:
+                    print(e)
+                    cv2.line(detected_image, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 1)
             return detected_image
         else:
             print("Can't draw lsd lines")
