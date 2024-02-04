@@ -93,16 +93,13 @@ class LineSegmentDetector(Image):
 
             for line_info in line_infos:
                 x1, y1, x2, y2, deg = line_info
-                try:
-                    mode = statistics.mode(degs)
-                    # mode_deg_lines = []
-                    if deg <= mode+2 and deg >= mode-2:
-                        cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
-                        # mode_deg_line = [x1, y1, x2, y2, deg]
-                        # mode_deg_lines.append(mode_deg_line)
-                except Exception as e:
-                    print(e)
-                    cv2.line(detected_image, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 1)
+                mode = statistics.mode(degs)
+                # mode_deg_lines = []
+                if deg <= mode+2 and deg >= mode-2:
+                    pass
+                cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                    # mode_deg_line = [x1, y1, x2, y2, deg]
+                    # mode_deg_lines.append(mode_deg_line)
             return detected_image
         else:
             print("Can't draw lsd lines")

@@ -17,7 +17,7 @@ class FFT(Image):
 
     def get_spectrum(self, shifted_fft):
         shifted_fft[shifted_fft == 0] = np.finfo(float).eps
-        return 20*np.log(np.abs(shifted_fft))
+        return 20*np.log(np.abs(shifted_fft)).astype(np.float32)
 
 class IFFT(Image):
     def __init__(self, image: FFT, *args):
@@ -34,7 +34,7 @@ class FrequencyFilter(FFT):
     def __init__(self, image: Image, *args):
         super().__init__(image, *args)
         self._mask = self.make_mask(self._fft_image, *args)
-        self._shifted_fft, self._fft_image = self.apply_mask(self._shifted_fft, self._mask)
+        self._masked_shifted_fft, self._masked_fft_image = self.apply_mask(self._shifted_fft, self._mask)
 
     def make_mask(self, fft_image):
         height, width = fft_image.shape[0], fft_image.shape[1]
@@ -47,9 +47,9 @@ class FrequencyFilter(FFT):
     #     return masked_shifted_fft, masked_fft_image
 
     def apply_mask(self, shifted_fft, mask):
-        _shifted_fft = np.multiply(shifted_fft, mask)
-        _fft_image = self.get_spectrum(_shifted_fft)
-        return _shifted_fft, _fft_image
+        masked_shifted_fft = np.multiply(shifted_fft, mask)
+        masked_fft_image = self.get_spectrum(masked_shifted_fft)
+        return masked_shifted_fft, masked_fft_image
 
 
 class LowpassFilter(FrequencyFilter):
@@ -93,9 +93,9 @@ class BandpassFilter(FrequencyFilter):
         return mask
 
 class PeakFilter(FrequencyFilter):
-    def __init__(self, image: FFT):
+    def __init__(self, image: BandpassFilter):
         self._title = self.set_title(image._title)
-        self._peak_image = self.detect_peaks(image._fft_image)
+        self._peak_image = self.detect_peaks(image._masked_fft_image)
         self._spot_image = self.peak2spot(self._peak_image)
         self._fft_image = image._fft_image*self._spot_image
         self._shifted_fft = image._shifted_fft
@@ -108,9 +108,15 @@ class PeakFilter(FrequencyFilter):
         peak_image = fft_image
         local_max = maximum_filter(peak_image, footprint=np.ones((filter_size, filter_size)), mode='constant')
         peak_image[local_max!=peak_image] = [0]
-        peak_image[peak_image!=peak_image.max()] = [0]
+        peak1 = peak_image.max()
+        # peak1 = np.unique(peak_image.ravel())[-1]
+        #peak2 = np.unique(peak_image.ravel())[-2]
+        # peak2 = peak_image.max()
+        #peak_image = np.where((peak_image!=peak1) & (peak_image!=peak2), 0, 1)
+        peak_image = np.where(peak_image!=peak1, 0, 1)
+        #peak_image[peak_image!=peak_image.max()] = [0]
         #peak_image[peak_image<=peak_image.max()*order] = [0]
-        peak_image[peak_image!=0] = [1]
+        #peak_image[peak_image!=0] = [1]
         return peak_image
 
     def peak2spot(self, peak_image: np.ndarray):

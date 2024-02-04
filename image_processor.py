@@ -45,10 +45,8 @@ class Image(ABC): # Interface for Image
             bgr_image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
             cv2.imwrite(path, bgr_image)
         else:
-            # try:
-            cv2.imwrite(path, image)
-            # except:
-            #     cv2.imwrite(path, image.astype(np.uint8))
+            #image = np.clip(image * 255, 0, 255)
+            cv2.imwrite(path, image.astype(np.uint8))
 
     @staticmethod
     def pixel_counter(title: str, image: np.ndarray, color=[0,0,255]):
@@ -61,6 +59,7 @@ class Image(ABC): # Interface for Image
                 if (pixel == color).all():
                     counter += 1
         print(f"{title}'s number of {color} pixel is {counter}")
+        return counter
 
 class ComposeImage(Image):
     def __init__(self, original_image: Image, bin_image: Image):
