@@ -61,6 +61,16 @@ class Image(ABC): # Interface for Image
         print(f"{title}'s number of {color} pixel is {counter}")
         return counter
 
+    @staticmethod
+    def calc_psnr(title: str, original: np.ndarray, image: np.ndarray):
+        psnr = cv2.PSNR(original, image.astype(np.float32))
+        print(f"{title}'s PSNR is {psnr}")
+
+    @staticmethod
+    def calc_ssim(title: str, original: np.ndarray, image: np.ndarray):
+        ssim, _ = cv2.quality.QualitySSIM_compute(original, image)
+        print(f"{title}'s SSIM is {ssim[0]}")
+
 class ComposeImage(Image):
     def __init__(self, original_image: Image, bin_image: Image):
         # rgb_image = original_image._rgb_image.astype(np.uint8).copy()
