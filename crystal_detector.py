@@ -8,8 +8,8 @@ import cv2
 import statistics
 
 if __name__ == '__main__':
-    title = "unclear"
-    path = "unclear/unclear.jpg"
+    title = "clear"
+    path = "clear/clear.png"
     original = Path2Image(title, path)
 
     # Noise Filter
@@ -24,17 +24,17 @@ if __name__ == '__main__':
     fft = FFT(original)
     low = LowpassFilter(original, inner_radius=65)
     low_ifft = IFFT(low)
-    Image.save_image(ave3._title, ave3._gray_image, dir='unclear/noise')
-    Image.save_image(ave5._title, ave5._gray_image, dir='unclear/noise')
-    Image.save_image(med3._title, med3._gray_image, dir='unclear/noise')
-    Image.save_image(med5._title, med5._gray_image, dir='unclear/noise')
-    Image.save_image(gau3._title, gau3._gray_image, dir='unclear/noise')
-    Image.save_image(gau5._title, gau5._gray_image, dir='unclear/noise')
-    Image.save_image(bil3._title, bil3._gray_image, dir='unclear/noise')
-    Image.save_image(bil5._title, bil5._gray_image, dir='unclear/noise')
-    Image.save_image(fft._title, fft._fft_image, dir='unclear/noise')
-    Image.save_image(low._title, low._fft_image, dir='unclear/noise')
-    Image.save_image(low_ifft._title, low_ifft._gray_image, dir='unclear/noise')
+    Image.save_image(ave3._title, ave3._gray_image, dir='clear/noise')
+    Image.save_image(ave5._title, ave5._gray_image, dir='clear/noise')
+    Image.save_image(med3._title, med3._gray_image, dir='clear/noise')
+    Image.save_image(med5._title, med5._gray_image, dir='clear/noise')
+    Image.save_image(gau3._title, gau3._gray_image, dir='clear/noise')
+    Image.save_image(gau5._title, gau5._gray_image, dir='clear/noise')
+    Image.save_image(bil3._title, bil3._gray_image, dir='clear/noise')
+    Image.save_image(bil5._title, bil5._gray_image, dir='clear/noise')
+    Image.save_image(fft._title, fft._fft_image, dir='clear/noise')
+    Image.save_image(low._title, low._fft_image, dir='clear/noise')
+    Image.save_image(low_ifft._title, low_ifft._gray_image, dir='clear/noise')
 
     noises = [ave3, ave5, med3, med5, gau3, gau5, bil3, bil5, low_ifft]
 
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     cans = [can_ave3,can_ave5,can_med3,can_med5,can_gau3,can_gau5,can_bil3,can_bil5,can_low_ifft]
 
     for i in cans:
-        Image.save_image(i._title, i._gray_image, dir='unclear/canny')
+        Image.save_image(i._title, i._gray_image, dir='clear/canny')
 
     # high
     high_ave3 = HighpassFilter(ave3, outer_radius=55)
@@ -78,12 +78,12 @@ if __name__ == '__main__':
     highs = [high_ave3_ifft,high_ave5_ifft,high_med3_ifft,high_med5_ifft,high_gau3_ifft,high_gau5_ifft,high_bil3_ifft,high_bil5_ifft,high_low_ifft_ifft]
 
     for i in highs:
-        Image.save_image(i._title, i._gray_image, dir='unclear/highpass')
+        Image.save_image(i._title, i._gray_image, dir='clear/highpass')
 
     high_masks = [high_ave3,high_ave5,high_med3,high_med5,high_gau3,high_gau5,high_bil3,high_bil5,high_low_ifft]
 
     for i in high_masks:
-        Image.save_image(i._title, i._fft_image, dir='unclear/highpass')
+        Image.save_image(i._title, i._fft_image, dir='clear/highpass')
 
     # prewitt
     pre3_ave3 = PrewittEdgeDetector(ave3, ksize=3)
@@ -107,7 +107,7 @@ if __name__ == '__main__':
 
     pres = [pre3_ave3,pre3_ave5,pre5_ave3,pre5_ave5,pre3_med3,pre3_med5,pre5_med3,pre5_med5,pre3_gau3,pre3_gau5,pre5_gau3,pre5_gau5,pre3_bil3,pre3_bil5,pre5_bil3,pre5_bil5,pre3_low_ifft,pre5_low_ifft]
     for i in pres:
-        Image.save_image(i._title, i._gray_image, dir='unclear/prewitt')
+        Image.save_image(i._title, i._gray_image, dir='clear/prewitt')
 
     # sobel
     sob3_ave3 = SobelEdgeDetector(ave3, ksize=3)
@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
     sobs = [sob3_ave3,sob3_ave5,sob5_ave3,sob5_ave5,sob3_med3,sob3_med5,sob5_med3,sob5_med5,sob3_gau3,sob3_gau5,sob5_gau3,sob5_gau5,sob3_bil3,sob3_bil5,sob5_bil3,sob5_bil5,sob3_low_ifft,sob5_low_ifft]
     for i in sobs:
-        Image.save_image(i._title, i._gray_image, dir='unclear/sobel')
+        Image.save_image(i._title, i._gray_image, dir='clear/sobel')
 
     # lap
     lap3_ave3 = LaplacianEdgeDetector(ave3, ksize=3)
@@ -155,85 +155,85 @@ if __name__ == '__main__':
 
     laps = [lap3_ave3,lap3_ave5,lap5_ave3,lap5_ave5,lap3_med3,lap3_med5,lap5_med3,lap5_med5,lap3_gau3,lap3_gau5,lap5_gau3,lap5_gau5,lap3_bil3,lap3_bil5,lap5_bil3,lap5_bil5,lap3_low_ifft,lap5_low_ifft]
     for i in laps:
-        Image.save_image(i._title, i._gray_image, dir='unclear/laplacian')
+        Image.save_image(i._title, i._gray_image, dir='clear/laplacian')
 
-    # # phough
-    # phough_can_ave3 = PHoughTransform(can_ave3)
-    # phough_can_ave5 = PHoughTransform(can_ave5)
-    # phough_high_ave3 = PHoughTransform(high_ave3_ifft)
-    # phough_high_ave5 = PHoughTransform(high_ave5_ifft)
-    # phough_pre3_ave3 = PHoughTransform(pre3_ave3)
-    # phough_pre3_ave5 = PHoughTransform(pre3_ave5)
-    # phough_pre5_ave3 = PHoughTransform(pre5_ave3)
-    # phough_pre5_ave5 = PHoughTransform(pre5_ave5)
-    # phough_sob3_ave3 = PHoughTransform(sob3_ave3)
-    # phough_sob3_ave5 = PHoughTransform(sob3_ave5)
-    # phough_sob5_ave3 = PHoughTransform(sob5_ave3)
-    # phough_sob5_ave5 = PHoughTransform(sob5_ave5)
-    # phough_lap3_ave3 = PHoughTransform(lap3_ave3)
-    # phough_lap3_ave5 = PHoughTransform(lap3_ave5)
-    # phough_lap5_ave3 = PHoughTransform(lap5_ave3)
-    # phough_lap5_ave5 = PHoughTransform(lap5_ave5)
+    # phough
+    phough_can_ave3 = PHoughTransform(can_ave3)
+    phough_can_ave5 = PHoughTransform(can_ave5)
+    phough_high_ave3 = PHoughTransform(high_ave3_ifft)
+    phough_high_ave5 = PHoughTransform(high_ave5_ifft)
+    phough_pre3_ave3 = PHoughTransform(pre3_ave3)
+    phough_pre3_ave5 = PHoughTransform(pre3_ave5)
+    phough_pre5_ave3 = PHoughTransform(pre5_ave3)
+    phough_pre5_ave5 = PHoughTransform(pre5_ave5)
+    phough_sob3_ave3 = PHoughTransform(sob3_ave3)
+    phough_sob3_ave5 = PHoughTransform(sob3_ave5)
+    phough_sob5_ave3 = PHoughTransform(sob5_ave3)
+    phough_sob5_ave5 = PHoughTransform(sob5_ave5)
+    phough_lap3_ave3 = PHoughTransform(lap3_ave3)
+    phough_lap3_ave5 = PHoughTransform(lap3_ave5)
+    phough_lap5_ave3 = PHoughTransform(lap5_ave3)
+    phough_lap5_ave5 = PHoughTransform(lap5_ave5)
 
-    # phough_can_med3 = PHoughTransform(can_med3)
-    # phough_can_med5 = PHoughTransform(can_med5)
-    # phough_high_med3 = PHoughTransform(high_med3_ifft)
-    # phough_high_med5 = PHoughTransform(high_med5_ifft)
-    # phough_pre3_med3 = PHoughTransform(pre3_med3)
-    # phough_pre3_med5 = PHoughTransform(pre3_med5)
-    # phough_pre5_med3 = PHoughTransform(pre5_med3)
-    # phough_pre5_med5 = PHoughTransform(pre5_med5)
-    # phough_sob3_med3 = PHoughTransform(sob3_med3)
-    # phough_sob3_med5 = PHoughTransform(sob3_med5)
-    # phough_sob5_med3 = PHoughTransform(sob5_med3)
-    # phough_sob5_med5 = PHoughTransform(sob5_med5)
-    # phough_lap3_med3 = PHoughTransform(lap3_med3)
-    # phough_lap3_med5 = PHoughTransform(lap3_med5)
-    # phough_lap5_med3 = PHoughTransform(lap5_med3)
-    # phough_lap5_med5 = PHoughTransform(lap5_med5)
+    phough_can_med3 = PHoughTransform(can_med3)
+    phough_can_med5 = PHoughTransform(can_med5)
+    phough_high_med3 = PHoughTransform(high_med3_ifft)
+    phough_high_med5 = PHoughTransform(high_med5_ifft)
+    phough_pre3_med3 = PHoughTransform(pre3_med3)
+    phough_pre3_med5 = PHoughTransform(pre3_med5)
+    phough_pre5_med3 = PHoughTransform(pre5_med3)
+    phough_pre5_med5 = PHoughTransform(pre5_med5)
+    phough_sob3_med3 = PHoughTransform(sob3_med3)
+    phough_sob3_med5 = PHoughTransform(sob3_med5)
+    phough_sob5_med3 = PHoughTransform(sob5_med3)
+    phough_sob5_med5 = PHoughTransform(sob5_med5)
+    phough_lap3_med3 = PHoughTransform(lap3_med3)
+    phough_lap3_med5 = PHoughTransform(lap3_med5)
+    phough_lap5_med3 = PHoughTransform(lap5_med3)
+    phough_lap5_med5 = PHoughTransform(lap5_med5)
 
-    # phough_can_gau3 = PHoughTransform(can_gau3)
-    # phough_can_gau5 = PHoughTransform(can_gau5)
-    # phough_high_gau3 = PHoughTransform(high_gau3_ifft)
-    # phough_high_gau5 = PHoughTransform(high_gau5_ifft)
-    # phough_pre3_gau3 = PHoughTransform(pre3_gau3)
-    # phough_pre3_gau5 = PHoughTransform(pre3_gau5)
-    # phough_pre5_gau3 = PHoughTransform(pre5_gau3)
-    # phough_pre5_gau5 = PHoughTransform(pre5_gau5)
-    # phough_sob3_gau3 = PHoughTransform(sob3_gau3)
-    # phough_sob3_gau5 = PHoughTransform(sob3_gau5)
-    # phough_sob5_gau3 = PHoughTransform(sob5_gau3)
-    # phough_sob5_gau5 = PHoughTransform(sob5_gau5)
-    # phough_lap3_gau3 = PHoughTransform(lap3_gau3)
-    # phough_lap3_gau5 = PHoughTransform(lap3_gau5)
-    # phough_lap5_gau3 = PHoughTransform(lap5_gau3)
-    # phough_lap5_gau5 = PHoughTransform(lap5_gau5)
+    phough_can_gau3 = PHoughTransform(can_gau3)
+    phough_can_gau5 = PHoughTransform(can_gau5)
+    phough_high_gau3 = PHoughTransform(high_gau3_ifft)
+    phough_high_gau5 = PHoughTransform(high_gau5_ifft)
+    phough_pre3_gau3 = PHoughTransform(pre3_gau3)
+    phough_pre3_gau5 = PHoughTransform(pre3_gau5)
+    phough_pre5_gau3 = PHoughTransform(pre5_gau3)
+    phough_pre5_gau5 = PHoughTransform(pre5_gau5)
+    phough_sob3_gau3 = PHoughTransform(sob3_gau3)
+    phough_sob3_gau5 = PHoughTransform(sob3_gau5)
+    phough_sob5_gau3 = PHoughTransform(sob5_gau3)
+    phough_sob5_gau5 = PHoughTransform(sob5_gau5)
+    phough_lap3_gau3 = PHoughTransform(lap3_gau3)
+    phough_lap3_gau5 = PHoughTransform(lap3_gau5)
+    phough_lap5_gau3 = PHoughTransform(lap5_gau3)
+    phough_lap5_gau5 = PHoughTransform(lap5_gau5)
 
-    # phough_can_bil3 = PHoughTransform(can_bil3)
-    # phough_can_bil5 = PHoughTransform(can_bil5)
-    # phough_high_bil3 = PHoughTransform(high_bil3_ifft)
-    # phough_high_bil5 = PHoughTransform(high_bil5_ifft)
-    # phough_pre3_bil3 = PHoughTransform(pre3_bil3)
-    # phough_pre3_bil5 = PHoughTransform(pre3_bil5)
-    # phough_pre5_bil3 = PHoughTransform(pre5_bil3)
-    # phough_pre5_bil5 = PHoughTransform(pre5_bil5)
-    # phough_sob3_bil3 = PHoughTransform(sob3_bil3)
-    # phough_sob3_bil5 = PHoughTransform(sob3_bil5)
-    # phough_sob5_bil3 = PHoughTransform(sob5_bil3)
-    # phough_sob5_bil5 = PHoughTransform(sob5_bil5)
-    # phough_lap3_bil3 = PHoughTransform(lap3_bil3)
-    # phough_lap3_bil5 = PHoughTransform(lap3_bil5)
-    # phough_lap5_bil3 = PHoughTransform(lap5_bil3)
-    # phough_lap5_bil5 = PHoughTransform(lap5_bil5)
+    phough_can_bil3 = PHoughTransform(can_bil3)
+    phough_can_bil5 = PHoughTransform(can_bil5)
+    phough_high_bil3 = PHoughTransform(high_bil3_ifft)
+    phough_high_bil5 = PHoughTransform(high_bil5_ifft)
+    phough_pre3_bil3 = PHoughTransform(pre3_bil3)
+    phough_pre3_bil5 = PHoughTransform(pre3_bil5)
+    phough_pre5_bil3 = PHoughTransform(pre5_bil3)
+    phough_pre5_bil5 = PHoughTransform(pre5_bil5)
+    phough_sob3_bil3 = PHoughTransform(sob3_bil3)
+    phough_sob3_bil5 = PHoughTransform(sob3_bil5)
+    phough_sob5_bil3 = PHoughTransform(sob5_bil3)
+    phough_sob5_bil5 = PHoughTransform(sob5_bil5)
+    phough_lap3_bil3 = PHoughTransform(lap3_bil3)
+    phough_lap3_bil5 = PHoughTransform(lap3_bil5)
+    phough_lap5_bil3 = PHoughTransform(lap5_bil3)
+    phough_lap5_bil5 = PHoughTransform(lap5_bil5)
 
-    # phough_can_low_ifft = PHoughTransform(can_low_ifft)
-    # phough_high_low_ifft = PHoughTransform(high_low_ifft_ifft)
-    # phough_pre3_low_ifft = PHoughTransform(pre3_low_ifft)
-    # phough_pre5_low_ifft = PHoughTransform(pre5_low_ifft)
-    # phough_sob3_low_ifft = PHoughTransform(sob3_low_ifft)
-    # phough_sob5_low_ifft = PHoughTransform(sob5_low_ifft)
-    # phough_lap3_low_ifft = PHoughTransform(lap3_low_ifft)
-    # phough_lap5_low_ifft = PHoughTransform(lap5_low_ifft)
+    phough_can_low_ifft = PHoughTransform(can_low_ifft)
+    phough_high_low_ifft = PHoughTransform(high_low_ifft_ifft)
+    phough_pre3_low_ifft = PHoughTransform(pre3_low_ifft)
+    phough_pre5_low_ifft = PHoughTransform(pre5_low_ifft)
+    phough_sob3_low_ifft = PHoughTransform(sob3_low_ifft)
+    phough_sob5_low_ifft = PHoughTransform(sob5_low_ifft)
+    phough_lap3_low_ifft = PHoughTransform(lap3_low_ifft)
+    phough_lap5_low_ifft = PHoughTransform(lap5_low_ifft)
 
     # LSD
     lsd_can_ave3 = LineSegmentDetector(can_ave3)
@@ -313,39 +313,39 @@ if __name__ == '__main__':
     lsd_lap3_low_ifft = LineSegmentDetector(lap3_low_ifft)
     lsd_lap5_low_ifft = LineSegmentDetector(lap5_low_ifft)
 
-    # phoughs = [phough_can_ave3,phough_can_ave5,phough_high_ave3,phough_high_ave5,phough_pre3_ave3,phough_pre3_ave5,phough_pre5_ave3,phough_pre5_ave5,phough_sob3_ave3,phough_sob3_ave5,phough_sob5_ave3,phough_sob5_ave5,phough_lap3_ave3,phough_lap3_ave5,phough_lap5_ave3,phough_lap5_ave5,phough_can_med3,phough_can_med5,phough_high_med3,phough_high_med5,phough_pre3_med3,phough_pre3_med5,phough_pre5_med3,phough_pre5_med5,phough_sob3_med3,phough_sob3_med5,phough_sob5_med3,phough_sob5_med5,phough_lap3_med3,phough_lap3_med5,phough_lap5_med3,phough_lap5_med5,phough_can_gau3,phough_can_gau5,phough_high_gau3,phough_high_gau5,phough_pre3_gau3,phough_pre3_gau5,phough_pre5_gau3,phough_pre5_gau5,phough_sob3_gau3,phough_sob3_gau5,phough_sob5_gau3,phough_sob5_gau5,phough_lap3_gau3,phough_lap3_gau5,phough_lap5_gau3,phough_lap5_gau5,phough_can_bil3,phough_can_bil5,phough_high_bil3,phough_high_bil5,phough_pre3_bil3,phough_pre3_bil5,phough_pre5_bil3,phough_pre5_bil5,phough_sob3_bil3,phough_sob3_bil5,phough_sob5_bil3,phough_sob5_bil5,phough_lap3_bil3,phough_lap3_bil5,phough_lap5_bil3,phough_lap5_bil5,phough_can_low_ifft,phough_high_low_ifft,phough_pre3_low_ifft,phough_pre5_low_ifft,phough_sob3_low_ifft,phough_sob5_low_ifft,phough_lap3_low_ifft,phough_lap5_low_ifft]
+    phoughs = [phough_can_ave3,phough_can_ave5,phough_high_ave3,phough_high_ave5,phough_pre3_ave3,phough_pre3_ave5,phough_pre5_ave3,phough_pre5_ave5,phough_sob3_ave3,phough_sob3_ave5,phough_sob5_ave3,phough_sob5_ave5,phough_lap3_ave3,phough_lap3_ave5,phough_lap5_ave3,phough_lap5_ave5,phough_can_med3,phough_can_med5,phough_high_med3,phough_high_med5,phough_pre3_med3,phough_pre3_med5,phough_pre5_med3,phough_pre5_med5,phough_sob3_med3,phough_sob3_med5,phough_sob5_med3,phough_sob5_med5,phough_lap3_med3,phough_lap3_med5,phough_lap5_med3,phough_lap5_med5,phough_can_gau3,phough_can_gau5,phough_high_gau3,phough_high_gau5,phough_pre3_gau3,phough_pre3_gau5,phough_pre5_gau3,phough_pre5_gau5,phough_sob3_gau3,phough_sob3_gau5,phough_sob5_gau3,phough_sob5_gau5,phough_lap3_gau3,phough_lap3_gau5,phough_lap5_gau3,phough_lap5_gau5,phough_can_bil3,phough_can_bil5,phough_high_bil3,phough_high_bil5,phough_pre3_bil3,phough_pre3_bil5,phough_pre5_bil3,phough_pre5_bil5,phough_sob3_bil3,phough_sob3_bil5,phough_sob5_bil3,phough_sob5_bil5,phough_lap3_bil3,phough_lap3_bil5,phough_lap5_bil3,phough_lap5_bil5,phough_can_low_ifft,phough_high_low_ifft,phough_pre3_low_ifft,phough_pre5_low_ifft,phough_sob3_low_ifft,phough_sob5_low_ifft,phough_lap3_low_ifft,phough_lap5_low_ifft]
 
     lsds = [lsd_can_ave3,lsd_can_ave5,lsd_high_ave3,lsd_high_ave5,lsd_pre3_ave3,lsd_pre3_ave5,lsd_pre5_ave3,lsd_pre5_ave5,lsd_sob3_ave3,lsd_sob3_ave5,lsd_sob5_ave3,lsd_sob5_ave5,lsd_lap3_ave3,lsd_lap3_ave5,lsd_lap5_ave3,lsd_lap5_ave5,lsd_can_med3,lsd_can_med5,lsd_high_med3,lsd_high_med5,lsd_pre3_med3,lsd_pre3_med5,lsd_pre5_med3,lsd_pre5_med5,lsd_sob3_med3,lsd_sob3_med5,lsd_sob5_med3,lsd_sob5_med5,lsd_lap3_med3,lsd_lap3_med5,lsd_lap5_med3,lsd_lap5_med5,lsd_can_gau3,lsd_can_gau5,lsd_high_gau3,lsd_high_gau5,lsd_pre3_gau3,lsd_pre3_gau5,lsd_pre5_gau3,lsd_pre5_gau5,lsd_sob3_gau3,lsd_sob3_gau5,lsd_sob5_gau3,lsd_sob5_gau5,lsd_lap3_gau3,lsd_lap3_gau5,lsd_lap5_gau3,lsd_lap5_gau5,lsd_can_bil3,lsd_can_bil5,lsd_high_bil3,lsd_high_bil5,lsd_pre3_bil3,lsd_pre3_bil5,lsd_pre5_bil3,lsd_pre5_bil5,lsd_sob3_bil3,lsd_sob3_bil5,lsd_sob5_bil3,lsd_sob5_bil5,lsd_lap3_bil3,lsd_lap3_bil5,lsd_lap5_bil3,lsd_lap5_bil5,lsd_can_low_ifft,lsd_high_low_ifft,lsd_pre3_low_ifft,lsd_pre5_low_ifft,lsd_sob3_low_ifft,lsd_sob5_low_ifft,lsd_lap3_low_ifft,lsd_lap5_low_ifft]
 
-    # for i in phoughs:
-    #     try:
-    #         compose = ComposeImage(original, i)
-    #         Image.save_image(i._title, compose._rgb_image, dir='unclear/phough')
-    #     except AttributeError as e:
-    #         print(e)
-    #         print(f"{i._title}")
-    #         pass
+    for i in phoughs:
+        try:
+            compose = ComposeImage(original, i)
+            Image.save_image(i._title, compose._rgb_image, dir='clear/phough')
+        except AttributeError as e:
+            print(e)
+            print(f"{i._title}")
+            pass
 
     for i in lsds:
         try:
             compose = ComposeImage(original, i)
-            Image.save_image(i._title, compose._rgb_image, dir='unclear/LSD')
+            Image.save_image(i._title, compose._rgb_image, dir='clear/LSD')
         except AttributeError as e:
             print(e)
             print(f"{i._title}")
             pass
 
     # bandpass = BandpassFilter(original, outer_radius=100, inner_radius=50)
-    # Image.save_image(bandpass._title, bandpass._fft_image, dir='unclear/')
-    # Image.save_image(bandpass._title, bandpass._fft_image, dir='unclear/')
+    # Image.save_image(bandpass._title, bandpass._fft_image, dir='clear/')
+    # Image.save_image(bandpass._title, bandpass._fft_image, dir='clear/')
     # fft = FFT(original)
-    # Image.save_image(fft._title, fft._fft_image, dir='unclear/')
+    # Image.save_image(fft._title, fft._fft_image, dir='clear/')
     # peak = PeakFilter(bandpass)
-    # Image.save_image(peak._title, peak._fft_image, dir='unclear/')
+    # Image.save_image(peak._title, peak._fft_image, dir='clear/')
     # peak_ifft = IFFT(peak)
-    # Image.save_image(peak_ifft._title, peak_ifft._gray_image, dir='unclear/')
+    # Image.save_image(peak_ifft._title, peak_ifft._gray_image, dir='clear/')
     # bin = OtsuBinarization(peak_ifft)
     # compose = ComposeImage(original, bin)
-    # Image.save_image(bin._title, bin._gray_image, dir='unclear/')
-    # Image.save_image(compose._title, compose._rgb_image, dir='unclear/')
+    # Image.save_image(bin._title, bin._gray_image, dir='clear/')
+    # Image.save_image(compose._title, compose._rgb_image, dir='clear/')
 

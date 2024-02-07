@@ -96,7 +96,7 @@ class LineSegmentDetector(Image):
                 x1, y1, x2, y2, deg = line_info
                 mode = statistics.mode(degs)
                 # mode_deg_lines = []
-                if deg <= mode+10 and deg >= mode-10:
+                if deg <= mode+50 and deg >= mode-50:
                     #pass
                     cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 3)
                     # mode_deg_line = [x1, y1, x2, y2, deg]
