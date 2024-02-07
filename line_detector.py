@@ -59,9 +59,9 @@ class PHoughTransform(Image):
                 rad = math.atan2(x2-x1, y2-y1)
                 deg = rad*(180/np.pi)
                 deg = int(Decimal(deg).quantize(Decimal('1E1'), rounding=ROUND_HALF_UP))
-                cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 3)
                 if deg <= mode+5 and deg >= mode-5:
-                    cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                    cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 3)
             return detected_image
         else:
             print("Can't draw pht lines")
@@ -76,7 +76,8 @@ class LineSegmentDetector(Image):
 
     def detect_lines(self, gray_image: np.ndarray):
         lines = lsd(gray_image)
-        detected_image = gray_image.copy()
+        height, width = gray_image.shape[0], gray_image.shape[1]
+        detected_image = np.ones([height, width], dtype=np.uint8)
         if lines is not None:
             degs = []
             line_infos = []
@@ -95,9 +96,9 @@ class LineSegmentDetector(Image):
                 x1, y1, x2, y2, deg = line_info
                 mode = statistics.mode(degs)
                 # mode_deg_lines = []
-                if deg <= mode+2 and deg >= mode-2:
-                    pass
-                cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 2)
+                if deg <= mode+10 and deg >= mode-10:
+                    #pass
+                    cv2.line(detected_image, (x1, y1), (x2, y2), (255, 0, 0), 3)
                     # mode_deg_line = [x1, y1, x2, y2, deg]
                     # mode_deg_lines.append(mode_deg_line)
             return detected_image
