@@ -100,6 +100,7 @@ class PeakFilter(FrequencyFilter):
         self._fft_image = image._fft_image*self._spot_image
         self._shifted_fft = image._shifted_fft
         self._shifted_fft[self._spot_image==0] = 0
+        self._masked_shifted_fft = self._shifted_fft
 
     def set_title(self, title: str):
         return "Peak " + title.replace("Original ", "")
@@ -124,4 +125,5 @@ class PeakFilter(FrequencyFilter):
         indices = np.dstack(np.where(spot_image == 1))
         for index in indices[0]:
             cv2.circle(spot_image, center=(index[1], index[0]), radius=4, color=1, thickness=-1)
+            break
         return spot_image
