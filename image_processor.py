@@ -46,7 +46,7 @@ class Image(ABC): # Interface for Image
             cv2.imwrite(path, bgr_image)
         else:
             #image = np.clip(image * 255, 0, 255)
-            cv2.imwrite(path, image.astype(np.uint8))
+            cv2.imwrite(path, image.astype(np.float32))
 
     @staticmethod
     def pixel_counter(title: str, image: np.ndarray, color=[0,0,255]):

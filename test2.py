@@ -7,7 +7,7 @@ from line_detector import HoughTransform, PHoughTransform, LineSegmentDetector
 
 if __name__ == '__main__':
     title = "clear"
-    path = "clear/clear.png"
+    path = "clear/clear.jpg"
     original = Path2Image(title, path)
 
     # bil5 = BilateralFilter(original, ksize=5)
@@ -34,9 +34,9 @@ if __name__ == '__main__':
     # Image.save_image(comp_lsd_can_low._title, comp_lsd_can_low._rgb_image, dir='unclear/')
     # Image.show_image(comp_lsd_can_low._title, comp_lsd_can_low._rgb_image)
 
-    bandpass = BandpassFilter(original, outer_radius=100, inner_radius=50)
-    Image.show_image(bandpass._title, bandpass._masked_fft_image)
-    peak = PeakFilter(bandpass)
+    highpass = HighpassFilter(original, outer_radius=50)
+    Image.save_image(highpass._title, highpass._masked_fft_image)
+    peak = PeakFilter(highpass)
     Image.show_image(peak._title, peak._fft_image)
     peak_ifft = IFFT(peak)
     Image.show_image(peak_ifft._title, peak_ifft._gray_image)
