@@ -51,6 +51,19 @@ class FrequencyFilter(FFT):
         masked_fft_image = self.get_spectrum(masked_shifted_fft)
         return masked_shifted_fft, masked_fft_image
 
+class PeakMask(FrequencyFilter):
+    def __init__(self, image: Image, *args):
+        super().__init__(image)
+
+    def set_title(self, title: str):
+        return "Peakmask " + title.replace("Original ", "")
+
+    def make_mask(self, image):
+        height, width = image.shape[0], image.shape[1]
+        mask = np.ones([height, width], dtype=np.uint8)
+        cv2.circle(mask, center=(242, 190), radius=3, color=0, thickness=-1)
+        cv2.circle(mask, center=(188, 240), radius=3, color=0, thickness=-1)
+        return mask
 
 class LowpassFilter(FrequencyFilter):
     def __init__(self, image: Image, inner_radius=90):
@@ -96,6 +109,8 @@ class PeakFilter(FrequencyFilter):
     def __init__(self, image: BandpassFilter):
         self._title = self.set_title(image._title)
         self._peak_image = self.detect_peaks(image._masked_fft_image)
+        Image.show_image(self._title, self._peak_image)
+        print(type(self._peak_image))
         self._spot_image = self.peak2spot(self._peak_image)
         self._fft_image = image._fft_image*self._spot_image
         self._shifted_fft = image._shifted_fft
@@ -123,6 +138,8 @@ class PeakFilter(FrequencyFilter):
     def peak2spot(self, peak_image: np.ndarray):
         spot_image = peak_image.copy()
         indices = np.dstack(np.where(spot_image == 1))
+        print(indices)
         for index in indices[0]:
+            print(index[0])
             cv2.circle(spot_image, center=(index[1], index[0]), radius=4, color=1, thickness=-1)
         return spot_image

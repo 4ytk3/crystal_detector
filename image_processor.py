@@ -36,7 +36,7 @@ class Image(ABC): # Interface for Image
     @staticmethod
     def save_image(title: str, image: np.ndarray, dir='image', fig_mode=False):
         name = title.lower().replace(' ', '_')
-        path = os.path.join(dir, f'{name}.png')
+        path = os.path.join(dir, f'{name}.jpg')
         if fig_mode:
             fig, ax = plt.subplots()
             Image.set_image(ax, title, image)
@@ -47,6 +47,7 @@ class Image(ABC): # Interface for Image
         else:
             #image = np.clip(image * 255, 0, 255)
             cv2.imwrite(path, image.astype(np.float32))
+            print("saved")
 
     @staticmethod
     def pixel_counter(title: str, image: np.ndarray, color=[0,0,255]):
