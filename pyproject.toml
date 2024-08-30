@@ -11,6 +11,8 @@ numpy = "^2.1.0"
 opencv-python = "^4.10.0.84"
 matplotlib = "^3.9.2"
 scipy = "^1.14.1"
+pylsd = "^0.0.2"
+lsd = "^0.3.3"
 
 [build-system]
 requires = ["poetry-core"]

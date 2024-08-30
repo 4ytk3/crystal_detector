@@ -278,6 +278,16 @@ files = [
 ]
 
 [[package]]
+name = "lsd"
+version = "0.3.3"
+description = "Pounds, shillings and pence conversion"
+optional = false
+python-versions = "*"
+files = [
+    {file = "lsd-0.3.3.tar.gz", hash = "sha256:ae0716df1e2d73bbe27de75d3053fbd649b506dc35d100a42e8e0838d9e59632"},
+]
+
+[[package]]
 name = "matplotlib"
 version = "3.9.2"
 description = "Python plotting package"
@@ -529,6 +539,16 @@ typing = ["typing-extensions"]
 xmp = ["defusedxml"]
 
 [[package]]
+name = "pylsd"
+version = "0.0.2"
+description = "pylsd is the python bindings for LSD - Line Segment Detector"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pylsd-0.0.2.tar.gz", hash = "sha256:eee1a43a1be20ebc99f392ade199608975d96af26bdb06c4dcbb3b845ea68a40"},
+]
+
+[[package]]
 name = "pyparsing"
 version = "3.1.4"
 description = "pyparsing module - Classes and methods to define and execute parsing grammars"
@@ -620,4 +640,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "f5099ffd6173964d883d8e6da443fae561f731c2de09c71ae87b239d2ceddf22"
+content-hash = "a147675982370403b9f90003157a4a324afdf027a46960db92bb68f876784edb"
