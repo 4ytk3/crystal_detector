@@ -108,6 +108,7 @@ class PeakFilter(FrequencyFilter):
     def detect_peaks(self, fft_image: np.ndarray, filter_size=5, order=0.8):
         peak_image = fft_image
         local_max = maximum_filter(peak_image, footprint=np.ones((filter_size, filter_size)), mode='constant')
+        Image.save_image("local_max", local_max)
         peak_image[local_max!=peak_image] = [0]
         peak1 = peak_image.max()
         # peak1 = np.unique(peak_image.ravel())[-1]
@@ -115,6 +116,7 @@ class PeakFilter(FrequencyFilter):
         # peak2 = peak_image.max()
         #peak_image = np.where((peak_image!=peak1) & (peak_image!=peak2), 0, 1)
         peak_image = np.where(peak_image!=peak1, 0, 1)
+        Image.save_image("peak_image", peak_image)
         #peak_image[peak_image!=peak_image.max()] = [0]
         #peak_image[peak_image<=peak_image.max()*order] = [0]
         #peak_image[peak_image!=0] = [1]
