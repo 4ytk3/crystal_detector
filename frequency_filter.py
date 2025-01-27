@@ -109,8 +109,6 @@ class PeakFilter(FrequencyFilter):
     def __init__(self, image: BandpassFilter):
         self._title = self.set_title(image._title)
         self._peak_image = self.detect_peaks(image._masked_fft_image)
-        Image.show_image(self._title, self._peak_image)
-        print(type(self._peak_image))
         self._spot_image = self.peak2spot(self._peak_image)
         self._fft_image = image._fft_image*self._spot_image
         self._shifted_fft = image._shifted_fft
@@ -136,10 +134,13 @@ class PeakFilter(FrequencyFilter):
         return peak_image
 
     def peak2spot(self, peak_image: np.ndarray):
-        spot_image = peak_image.copy()
+        spot_image = peak_image.copy().astype(np.uint8)
         indices = np.dstack(np.where(spot_image == 1))
-        print(indices)
+        center = 512
+        Y = 141
+        X = 65
+        indices = [[[center-X, center-Y],[center+X, center+Y]]]
+        #cv2.circle(spot_image, center=(center-Y, center-X), radius=4, color=1, thickness=-1)
         for index in indices[0]:
-            print(index[0])
-            cv2.circle(spot_image, center=(index[1], index[0]), radius=4, color=1, thickness=-1)
+            cv2.circle(spot_image, center=(index[1], index[0]), radius=5, color=1, thickness=-1)
         return spot_image
