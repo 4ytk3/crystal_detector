@@ -104,3 +104,11 @@ class Path2Image(Image):
         rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
         #rgb_image = cv2.cvtColor(bgr_image.astype(np.uint8), cv2.COLOR_BGR2RGB)
         return rgb_image
+    
+class NewImage(Image):
+    def __init__(self, title: str, image: np.ndarray):
+        self._title = self.set_title(title)
+        self._gray_image = image
+    
+    def set_title(self, title: str) -> str:
+        return "new " + title

@@ -106,10 +106,10 @@ class BandpassFilter(FrequencyFilter):
         return mask
 
 class PeakFilter(FrequencyFilter):
-    def __init__(self, image: BandpassFilter):
+    def __init__(self, image: BandpassFilter, indices):
         self._title = self.set_title(image._title)
         self._peak_image = self.detect_peaks(image._masked_fft_image)
-        self._spot_image = self.peak2spot(self._peak_image)
+        self._spot_image = self.peak2spot(self._peak_image, indices)
         self._fft_image = image._fft_image*self._spot_image
         self._shifted_fft = image._shifted_fft
         self._shifted_fft[self._spot_image==0] = 0
@@ -133,14 +133,21 @@ class PeakFilter(FrequencyFilter):
         #peak_image[peak_image!=0] = [1]
         return peak_image
 
-    def peak2spot(self, peak_image: np.ndarray):
+    def peak2spot(self, peak_image: np.ndarray, indices):
         spot_image = peak_image.copy().astype(np.uint8)
-        indices = np.dstack(np.where(spot_image == 1))
-        center = 512
-        Y = 141
-        X = 65
-        indices = [[[center-X, center-Y],[center+X, center+Y]]]
-        #cv2.circle(spot_image, center=(center-Y, center-X), radius=4, color=1, thickness=-1)
-        for index in indices[0]:
-            cv2.circle(spot_image, center=(index[1], index[0]), radius=5, color=1, thickness=-1)
+        #indices = np.dstack(np.where(spot_image == 1))
+        # center = 540
+        # Y = 60
+        # X = 0
+        # indices = [[[center-X, center-Y],[center+X, center+Y]]]
+        # indices = [[[center-X, center-Y],[center+X, 540]]]
+        # indices = [[[center-X, 540],[center+X, center+Y]]]
+        if indices != [[0, 0]]:
+            cv2.circle(spot_image, center=(indices[0][0], indices[0][1]), radius=4, color=1, thickness=-1)
+            cv2.circle(spot_image, center=(indices[1][0], indices[1][1]), radius=4, color=1, thickness=-1)
+            cv2.circle(spot_image, center=(indices[2][0], indices[2][1]), radius=2, color=1, thickness=-1)
+        else:
+            indices = np.dstack(np.where(spot_image == 1))
+            for index in indices[0]:
+                cv2.circle(spot_image, center=(index[1], index[0]), radius=4, color=1, thickness=-1)
         return spot_image
